@@ -1,17 +1,16 @@
 <?php
 
-// Transform ausführen.
-// transform.php führt wiederum automatisch extract.php aus.
+ini_set('display_errors', '1');
+error_reporting(E_ALL);
+
 $result = include __DIR__ . '/transform.php';
 
 echo '<pre>';
 
-// Audit anzeigen
 echo "=== AUDIT ===\n";
 print_r($result['audit']);
 
-// Transformierte Daten anzeigen
-echo "\n=== TRANSFORMIERTE DATEN ===\n";
+echo "\n=== DATEN ===\n";
 print_r($result['data']);
 
 echo '</pre>';
