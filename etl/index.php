@@ -1,3 +1,3 @@
 <?php
 
-echo "PHP funktioniert";
+echo "PHP funktioniert mit FTP";
