@@ -1,10 +1,10 @@
 <?php
 
-// ---------------------------------------------------------
-// 1. DATEN AUS EXTRACT.PHP EINLESEN
-// ---------------------------------------------------------
+
+//------------------- DATEN AUS EXTRACT.PHP EINLESEN -------------------
+
 // extract.php liest die beiden Roh-CSV-Dateien ein
-// und gibt sie als PHP-Arrays zurück.
+// und gibt sie als PHP-Arrays zurück
 
 $rawData = include __DIR__ . '/extract.php';
 
@@ -12,11 +12,11 @@ $licenseHoldersRaw = $rawData['license_holders'];
 $accidentsRaw = $rawData['accidents'];
 
 
-// ---------------------------------------------------------
-// 2. AUDIT VORBEREITEN
-// ---------------------------------------------------------
+
+// ------------------- AUDIT VORBEREITEN -------------------
+
 // Hier dokumentieren wir, wie viele Datensätze
-// hineinkommen, gefiltert werden und übrig bleiben.
+// hineinkommen, gefiltert werden und übrig bleiben
 
 $audit = [
     'license_holders_input' => count($licenseHoldersRaw),
@@ -27,10 +27,10 @@ $audit = [
 ];
 
 
-// ---------------------------------------------------------
-// 3. ERLAUBTE ALTERSGRUPPEN FESTLEGEN
-// ---------------------------------------------------------
-// Für unsere Hauptanalyse verwenden wir nur diese Gruppen.
+
+//------------------- ERLAUBTE ALTERSGRUPPEN FESTLEGEN -------------------
+
+// Für unsere Hauptanalyse verwenden wir nur diese Gruppen
 
 $allowedAgeGroups = [
     '20-29',
@@ -44,15 +44,13 @@ $allowedAgeGroups = [
 ];
 
 
-// ---------------------------------------------------------
-// 4. FÜHRERAUSWEISDATEN TRANSFORMIEREN
-// ---------------------------------------------------------
+// ------------------- FÜHRERAUSWEISDATEN TRANSFORMIEREN -------------------
 
 $licenseHolders = [];
 
 foreach ($licenseHoldersRaw as $row) {
 
-    // Prüfen, ob die benötigten Zahlenwerte gültig sind.
+    // Prüfen, ob die benötigten Zahlenwerte gültig sind
     if (
         !isset($row['Jahr'], $row['Altersgruppe'], $row['Führerausweisinhaber'])
         || !is_numeric($row['Jahr'])
@@ -62,14 +60,14 @@ foreach ($licenseHoldersRaw as $row) {
         continue;
     }
 
-    // Werte aus den Rohdaten holen.
+    // Werte aus den Rohdaten holen
     $year = (int) $row['Jahr'];
     $ageGroup = trim($row['Altersgruppe']);
     $holders = (int) $row['Führerausweisinhaber'];
 
 
     // FILTER:
-    // Nur Jahre 2016 bis 2025 behalten.
+    // Nur Jahre 2016 bis 2025 behalten
     if ($year < 2016 || $year > 2025) {
         $audit['license_holders_filtered']++;
         continue;
@@ -77,7 +75,7 @@ foreach ($licenseHoldersRaw as $row) {
 
 
     // FILTER:
-    // Nur die festgelegten Altersgruppen behalten.
+    // Nur die festgelegten Altersgruppen behalten
     if (!in_array($ageGroup, $allowedAgeGroups, true)) {
         $audit['license_holders_filtered']++;
         continue;
@@ -85,8 +83,7 @@ foreach ($licenseHoldersRaw as $row) {
 
 
     // RENAME:
-    // Rohdaten-Felder in die Namen unseres Datenvertrags
-    // überführen.
+    // Rohdaten-Felder in die Namen unseres Datenvertrag überführen
     $licenseHolders[] = [
         'year' => $year,
         'age_group' => $ageGroup,
@@ -99,15 +96,13 @@ foreach ($licenseHoldersRaw as $row) {
 $audit['license_holders_output'] = count($licenseHolders);
 
 
-// ---------------------------------------------------------
-// 5. UNFALLDATEN TRANSFORMIEREN
-// ---------------------------------------------------------
+// ------------------- UNFALLDATEN TRANSFORMIEREN -------------------
 
 $accidents = [];
 
 foreach ($accidentsRaw as $row) {
 
-    // Prüfen, ob alle benötigten Felder vorhanden sind.
+    // Prüfen, ob alle benötigten Felder vorhanden sind
     if (
         !isset(
             $row['Jahr'],
@@ -123,7 +118,7 @@ foreach ($accidentsRaw as $row) {
     }
 
 
-    // Prüfen, ob alle benötigten Zahlenwerte numerisch sind.
+    // Prüfen, ob alle benötigten Zahlenwerte numerisch sind
     if (
         !is_numeric($row['Jahr'])
         || !is_numeric($row['Beteiligungen an Unfällen mit Getöteten'])
@@ -153,7 +148,7 @@ foreach ($accidentsRaw as $row) {
 
 
     // FILTER:
-    // Nur Jahre 2016 bis 2025 behalten.
+    // Nur Jahre 2016 bis 2025 behalten
     if ($year < 2016 || $year > 2025) {
         $audit['accidents_filtered']++;
         continue;
@@ -161,7 +156,7 @@ foreach ($accidentsRaw as $row) {
 
 
     // FILTER:
-    // Nur die festgelegten Altersgruppen behalten.
+    // Nur die festgelegten Altersgruppen behalten
     if (!in_array($ageGroup, $allowedAgeGroups, true)) {
         $audit['accidents_filtered']++;
         continue;
@@ -169,8 +164,8 @@ foreach ($accidentsRaw as $row) {
 
 
     // RENAME:
-    // Rohdaten-Felder in die Namen unseres Datenvertrags
-    // überführen.
+    // Rohdaten-Felder in die Namen unseres Datenvertrags überführen
+
     $accidents[] = [
         'year' => $year,
         'age_group' => $ageGroup,
@@ -182,18 +177,13 @@ foreach ($accidentsRaw as $row) {
 }
 
 
-// Anzahl der verbleibenden Unfall-Datensätze.
+// Anzahl der verbleibenden Unfall-Datensätze
 $audit['accidents_output'] = count($accidents);
 
 
-// ---------------------------------------------------------
-// 6. BEIDE DATENQUELLEN ZUSAMMENFÜHREN
-// ---------------------------------------------------------
-// Eine fertige Zeile entspricht einer Altersgruppe
-// in einem bestimmten Jahr.
-//
-// Verbunden wird über:
-// year + age_group
+// ------------------- BEIDE DATENQUELLEN ZUSAMMENFÜHREN -------------------
+
+// Eine fertige Zeile entspricht so einer Altersgruppe in einem bestimmten Jahr
 
 $transformedData = [];
 
@@ -206,10 +196,7 @@ foreach ($accidents as $accident) {
             && $accident['age_group'] === $license['age_group']
         ) {
 
-
-            // -------------------------------------------------
-            // 7. RATE PRO 100'000 BERECHNEN
-            // ---------------------------------------------------------
+            // ---- RATE PRO 100'000 BERECHNEN ----
 
             $ratePer100k = round(
                 $accident['causally_involved']
@@ -219,9 +206,7 @@ foreach ($accidents as $accident) {
             );
 
 
-            // -------------------------------------------------
-            // 8. ANTEIL SCHWER / TÖDLICH BERECHNEN
-            // ---------------------------------------------------------
+            // ---- ANTEIL SCHWER / TÖDLICH BERECHNEN ----
 
             $seriousShare = round(
                 (
@@ -234,9 +219,7 @@ foreach ($accidents as $accident) {
             );
 
 
-            // -------------------------------------------------
-            // 9. FINALEN DATENSATZ NACH DATENVERTRAG ERSTELLEN
-            // ---------------------------------------------------------
+            // ---- FINALEN DATENSATZ NACH DATENVERTRAG ERSTELLEN ----
 
             $transformedData[] = [
                 'year' => $accident['year'],
@@ -250,23 +233,20 @@ foreach ($accidents as $accident) {
                 'serious_share' => $seriousShare
             ];
 
-            // Passender Datensatz gefunden.
+            // Passender Datensatz gefunden
             break;
         }
     }
 }
 
 
-// ---------------------------------------------------------
-// 10. AUDIT ABSCHLIESSEN
-// ---------------------------------------------------------
+// ------------------- AUDIT ABSCHLIESSEN -------------------
 
 $audit['final_output'] = count($transformedData);
 
 
-// ---------------------------------------------------------
-// 11. DATEN ZURÜCKGEBEN
-// ---------------------------------------------------------
+
+// ------------------- DATEN ZURÜCKGEBEN -------------------
 
 return [
     'data' => $transformedData,

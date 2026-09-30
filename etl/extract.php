@@ -1,6 +1,6 @@
 <?php
 
-// Führerausweis-Daten einlesen
+// ------------------- Führerausweis-Daten einlesen -------------------
 $handle = fopen(__DIR__ . '/data/fuehrerausweise_rohdaten.csv', 'r');
 
 $header = array_map('trim', fgetcsv($handle, null, ';', '"', ''));
@@ -9,7 +9,7 @@ $licenseHolders = [];
 
 while (($row = fgetcsv($handle, null, ';', '"', '')) !== false) {
 
-    // Leere Zeilen überspringen
+    // die leeren Zeilen überspringen
     if ($row[0] === '') {
         continue;
     }
@@ -20,7 +20,7 @@ while (($row = fgetcsv($handle, null, ';', '"', '')) !== false) {
 fclose($handle);
 
 
-// Unfall-Daten einlesen
+// ------------------- Unfall-Daten einlesen -------------------
 $handle = fopen(__DIR__ . '/data/unfaelle_rohdaten.csv', 'r');
 
 $header = array_map('trim', fgetcsv($handle, null, ';', '"', ''));
@@ -29,7 +29,7 @@ $accidents = [];
 
 while (($row = fgetcsv($handle, null, ';', '"', '')) !== false) {
 
-    // Leere Zeilen überspringen
+    // die leren Zeilen überspringen
     if ($row[0] === '') {
         continue;
     }
@@ -40,7 +40,7 @@ while (($row = fgetcsv($handle, null, ';', '"', '')) !== false) {
 fclose($handle);
 
 
-// Beide Datensätze weitergeben
+//  -------------------Beide Datensätze weitergeben -------------------
 return [
     'license_holders' => $licenseHolders,
     'accidents' => $accidents
