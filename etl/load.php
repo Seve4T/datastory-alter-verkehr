@@ -25,7 +25,7 @@ try {
 
     $pdo = new PDO($dsn, $username, $password, $options);
 
-    echo "Verbindung steht.\n\n";
+    echo "Verbindung steht (load).\n\n";
 
 
     // ------------------- ALTE DATEN LÖSCHEN -------------------
