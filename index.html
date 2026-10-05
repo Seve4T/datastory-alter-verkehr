@@ -7,14 +7,35 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>zu alt fürs Steuer</title>
-    <meta name="description"
-          content="noch zu definieren">
 
-    <link rel="stylesheet" href="style.css">
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
 
-    <script src="script.js" type="module"></script>
+    <title>Zu alt fürs Steuer</title>
+
+    <meta
+            name="description"
+            content="Was zehn Jahre Schweizer Unfalldaten über Alter und Fahrsicherheit zeigen"
+    >
+
+    <link
+            rel="stylesheet"
+            href="style.css"
+    >
+
+    <!-- Chart.js -->
+    <script
+            src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"
+            defer>
+    </script>
+
+    <!-- Eigenes JavaScript -->
+    <script
+            src="script.js"
+            defer>
+    </script>
 </head>
 
 <body>
@@ -196,12 +217,16 @@
              in Unfällen mit Personenschaden.»
         -->
         <figure class="graphic graphic--absolute-accidents">
-            <div class="graphic-placeholder"></div>
+
+            <div class="chart-container">
+                <canvas id="absoluteAccidentsChart"></canvas>
+            </div>
 
             <figcaption>
                 Gezählt werden ursächlich beteiligte PW-Lenkende
                 in Unfällen mit Personenschaden.
             </figcaption>
+
         </figure>
 
         <p class="highlight-text">

@@ -246,3 +246,17 @@ a {
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
+
+/* ========================================
+   9. Diagramme
+======================================== */
+
+.chart-container {
+    position: relative;
+
+    width: 100%;
+    max-width: 1000px;
+    height: 520px;
+
+    margin-block: var(--space-lg);
+}
