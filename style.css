@@ -1,0 +1,248 @@
+/* ========================================
+   1. Design Tokens
+======================================== */
+
+:root {
+    /* Grundfarben */
+    --color-navy: #12223A;
+    --color-white: #FFFCFE;
+    --color-orange: #E38500;
+    --color-blue: #6594DB;
+    --color-brown: #734300;
+
+    /* Semantische Farben */
+    --color-background: var(--color-navy);
+    --color-text: var(--color-white);
+    --color-heading: var(--color-orange);
+    --color-highlight: var(--color-orange);
+    --color-secondary: var(--color-blue);
+
+    /* Diagramme */
+    --color-chart-primary: var(--color-blue);
+    --color-chart-highlight: var(--color-orange);
+    --color-chart-secondary: var(--color-brown);
+    --color-chart-label: var(--color-white);
+    --color-chart-grid: rgba(255, 252, 254, 0.15);
+
+    /* Schrift */
+    --font-primary: "Google Sans Flex", Arial, sans-serif;
+
+    /* Schriftgrössen */
+    --font-size-small: 0.875rem;
+    --font-size-body: 1.125rem;
+    --font-size-lead: 1.5rem;
+
+    --font-size-h3: 2rem;
+    --font-size-h2: 3rem;
+    --font-size-h1: 4.5rem;
+
+    --font-size-data: 5rem;
+
+    /* Schriftstärken */
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+
+    /* Zeilenhöhen */
+    --line-height-tight: 1.05;
+    --line-height-heading: 1.15;
+    --line-height-body: 1.6;
+
+    /* Abstände */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 4rem;
+    --space-xl: 6rem;
+    --space-2xl: 10rem;
+
+    /* Layout */
+    --content-width: 1280px;
+    --text-width: 650px;
+    --column-gap: 6rem;
+}
+
+
+/* ========================================
+   2. Reset
+======================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+}
+
+img,
+svg,
+video,
+canvas {
+    display: block;
+    max-width: 100%;
+}
+
+
+/* ========================================
+   3. Grundlayout
+======================================== */
+
+body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+
+    font-family: var(--font-primary);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-body);
+}
+
+
+/* ========================================
+   4. Typografie
+======================================== */
+
+h1,
+h2,
+h3,
+p {
+    margin-top: 0;
+}
+
+h1,
+h2,
+h3 {
+    color: var(--color-heading);
+
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-heading);
+}
+
+h1 {
+    font-size: var(--font-size-h1);
+    line-height: var(--line-height-tight);
+}
+
+h2 {
+    font-size: var(--font-size-h2);
+}
+
+h3 {
+    font-size: var(--font-size-h3);
+}
+
+p {
+    max-width: var(--text-width);
+    margin-bottom: var(--space-md);
+}
+
+strong {
+    color: var(--color-highlight);
+    font-weight: var(--font-weight-bold);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+/* ========================================
+   5. Layout
+======================================== */
+
+.container {
+    width: min(calc(100% - 6rem), var(--content-width));
+    margin-inline: auto;
+}
+
+
+/* Zwei gleich grosse Spalten */
+
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--column-gap);
+    align-items: start;
+}
+
+
+/* Mehr Platz für Grafik */
+
+.two-column--visual {
+    grid-template-columns: 0.8fr 1.2fr;
+}
+
+
+/* Mehr Platz für Text */
+
+.two-column--text {
+    grid-template-columns: 1.2fr 0.8fr;
+}
+
+.column {
+    min-width: 0;
+}
+
+
+/* Vorbereitung für spätere Sticky-Elemente */
+
+.column--sticky {
+    /* position: sticky; */
+    /* top: 4rem; */
+}
+
+
+/* ========================================
+   6. Sections
+======================================== */
+
+.story-section {
+    padding-block: var(--space-2xl);
+}
+
+
+/* ========================================
+   7. Hervorhebungen
+======================================== */
+
+.text-highlight {
+    color: var(--color-orange);
+}
+
+.text-secondary {
+    color: var(--color-blue);
+}
+
+.data-number {
+    margin: 0;
+
+    color: var(--color-orange);
+
+    font-size: var(--font-size-data);
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+}
+
+
+/* ========================================
+   8. Kleine Überschriften
+======================================== */
+
+.eyebrow {
+    margin-bottom: var(--space-sm);
+
+    color: var(--color-blue);
+
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
