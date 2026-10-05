@@ -51,7 +51,7 @@
 
     <!-- Hero / Einstieg -->
     <section class="intro">
-        <h1>Opa, gib den Schlüssel ab! (TEST)</h1>
+        <h1>Opa, gib den Schlüssel ab!</h1>
 
         <p class="intro__lead">
             Was zehn Jahre Schweizer Unfalldaten über Alter und Fahrsicherheit zeigen
@@ -255,7 +255,16 @@
              als Lenker:innen in der Unfallstatistik auftauchen können.»
         -->
         <figure class="graphic graphic--licence-development">
-            <div class="graphic-placeholder"></div>
+
+            <div class="chart-container">
+                <canvas id="licenceDevelopmentChart"></canvas>
+            </div>
+
+            <figcaption>
+                Anzahl Führerausweisinhaber:innen nach Altersgruppe.
+                2016 und 2025 im Vergleich.
+            </figcaption>
+
         </figure>
 
     </section>
@@ -274,16 +283,10 @@
         <p>
             Wir setzen nun die Zahl der ursächlich beteiligten PW-Lenkenden ins
             Verhältnis zur Zahl der Führerausweisinhaber:innen derselben Altersgruppe.
-            Daraus ergibt sich unsere zentrale Kennzahl: ursächlich beteiligte PW-Lenkende
-            pro 100'000 Führerausweisinhaber:innen in der jeweiligen Altersgruppe.
+            Daraus ergibt sich unsere zentrale Kennzahl:
         </p>
 
-        <!-- GRAFIK:
-             Rechnung / Bruch optisch darstellen
-        -->
-        <div class="graphic graphic--formula">
-            <div class="graphic-placeholder"></div>
-        </div>
+
 
         <p>
             So verändert sich das Bild deutlich. Die Rate steigt nicht einfach mit jedem
@@ -317,9 +320,23 @@
              Kurve von 2016 einblenden.
              2016 und 2025 bleiben gleichzeitig sichtbar.
         -->
+
         <figure class="graphic graphic--accident-rate">
-            <div class="graphic-placeholder"></div>
+
+            <div class="chart-container">
+                <canvas id="accidentRateChart"></canvas>
+            </div>
+
+            <figcaption>
+                Ursächlich beteiligte PW-Lenkende pro 100'000
+                Führerausweisinhaber:innen der jeweiligen Altersgruppe.
+            </figcaption>
+
         </figure>
+
+        <div class="graphic graphic--formula">
+            <div class="graphic-placeholder"></div>
+        </div>
 
     </section>
 
@@ -374,7 +391,16 @@
              tödlichen Unfälle in einer anderen Farbe aus den Balken.
         -->
         <figure class="graphic graphic--severity">
-            <div class="graphic-placeholder"></div>
+
+            <div class="chart-container">
+                <canvas id="severityChart"></canvas>
+            </div>
+
+            <figcaption>
+                Anteil leichter sowie schwerer und tödlicher Unfälle
+                nach Altersgruppe.
+            </figcaption>
+
         </figure>
 
         <p>
