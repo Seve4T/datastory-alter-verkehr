@@ -35,7 +35,7 @@ const absoluteAccidentsCanvas =
 
 async function loadTrafficData() {
 
-    const response = await fetch('unload.php');
+    const response = await fetch('https://zu-alt-fuers-steuer-im3.isobopad.myhostpoint.ch/unload.php');
 
     if (!response.ok) {
         throw new Error('Die Daten konnten nicht geladen werden.');
