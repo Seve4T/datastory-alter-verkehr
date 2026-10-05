@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
 
-<!--
- Beschrieb
--->
-
 <head>
     <meta charset="UTF-8">
 
@@ -38,19 +34,24 @@
     </script>
 </head>
 
+
 <body>
 
-<!-- Header-->
+<!-- Header -->
 <header>
-
 </header>
 
-<!-- main-->
+
+<!-- Main -->
 <main>
 
 
-    <!-- Hero / Einstieg -->
+    <!-- ========================================
+         Einstieg
+    ======================================== -->
+
     <section class="intro">
+
         <h1>Opa, gib den Schlüssel ab!</h1>
 
         <p class="intro__lead">
@@ -60,7 +61,7 @@
         <p>
             Mit 18 Jahren beginnt für viele die Freiheit auf vier Rädern. Mit dem Erreichen
             der Volljährigkeit erteilt einem der Staat das Recht, selbstständig Auto zu fahren.
-            Eine Obergrenze gibt es in der Schweiz keine, weshalb sich die Frage stellt:
+            Eine Obergrenze gibt es in der Schweiz keine. Deshalb stellt sich die Frage:
             Gibt es ein Alter, ab dem Autofahren zum Sicherheitsrisiko wird?
         </p>
 
@@ -81,23 +82,40 @@
             tatsächlich in den Unfallzahlen? Wir haben die Schweizer Unfallstatistik der
             Jahre 2016 bis 2025 ausgewertet und mit weiteren Daten verglichen.
         </p>
+
     </section>
 
-    <!-- Erste Frage / Slider -->
+
+    <!-- ========================================
+         Erste Frage
+    ======================================== -->
+
     <section class="age-question">
 
-        <h2>Was denkst du?</h2>
+        <h2>Was denken Sie?</h2>
 
-        <label for="ageRange" class="age-question__label">
+        <label
+                for="ageRange"
+                class="age-question__label"
+        >
             Bis zu welchem Alter sollte das Autofahren erlaubt sein?
         </label>
 
         <div class="age-slider">
 
             <div class="age-slider__value">
-                <output id="ageOutput" for="ageRange">75</output>
+
+                <output
+                        id="ageOutput"
+                        for="ageRange"
+                >
+                    75
+                </output>
+
                 <span>Jahre</span>
+
             </div>
+
 
             <input
                     type="range"
@@ -109,10 +127,12 @@
                     step="1"
             >
 
+
             <div class="age-slider__labels">
                 <span>18</span>
                 <span>100</span>
             </div>
+
 
             <button
                     type="button"
@@ -121,6 +141,7 @@
             >
                 Antwort speichern
             </button>
+
 
             <p
                     id="saveMessage"
@@ -133,11 +154,41 @@
     </section>
 
 
-    <!-- Hinweise zur Datengrundlage -->
+    <!-- ========================================
+         Einführung in die Untersuchung
+    ======================================== -->
+
+    <section class="story-introduction">
+
+        <p>
+            In unserer Untersuchung interessiert uns nicht nur, wer wie oft in der
+            Unfallstatistik auftaucht. Wir wollen wissen, wie sich das Bild verändert, wenn
+            berücksichtigt wird, wie viele Menschen einer Altersgruppe überhaupt einen
+            Führerausweis besitzen – und wie schwer die Unfälle ausfallen, an denen sie
+            beteiligt sind.
+        </p>
+
+        <p>
+            Die Ausgangsfrage klingt einfach: Steigt die Zahl an Unfallbeteiligungen
+            tatsächlich mit dem Alter? Die Antwort ist komplizierter, als die absoluten
+            Unfallzahlen zunächst vermuten lassen.
+        </p>
+
+    </section>
+
+
+    <!-- ========================================
+         Hinweise zur Datengrundlage
+    ======================================== -->
+
     <details class="data-notes">
-        <summary>Hinweise zur Datengrundlage</summary>
+
+        <summary>
+            Hinweise zur Datengrundlage
+        </summary>
 
         <ul>
+
             <li>
                 <strong>Zeitraum:</strong>
                 Die Auswertung umfasst die Jahre 2016 bis 2025.
@@ -145,29 +196,26 @@
 
             <li>
                 <strong>Untersuchungsgruppe:</strong>
-                Berücksichtigt werden Personenwagen-Lenkende,
-                die in der Unfallstatistik als ursächlich beteiligt erfasst sind.
+                Berücksichtigt werden Personenwagen-Lenkende, die in der
+                Unfallstatistik als ursächlich beteiligt erfasst sind.
             </li>
 
             <li>
                 <strong>Altersgruppen:</strong>
-                Verglichen werden die Gruppen 20–29, 30–39, 40–49, 50–59,
+                Verglichen werden 20–29, 30–39, 40–49, 50–59,
                 60–69, 70–79, 80–89 und 90+.
             </li>
 
             <li>
-                <strong>Warum beginnt der Vergleich erst bei 20 Jahren?</strong>
-                Die Führerausweisdaten wurden beim ASTRA so aufbereitet, dass sie
-                möglichst genau den Altersklassen der Unfallstatistik entsprechen.
-                Für Personen unter 20 Jahren ist ein direkter Vergleich jedoch nicht
-                belastbar: Die Unfallstatistik fasst die 10- bis 19-Jährigen zusammen,
-                während auf Seite der Führerausweise nur die 18- bis 19-Jährigen relevant
-                sind. Dadurch könnten beispielsweise Unfälle von 17-Jährigen ohne
-                Führerausweis in die Berechnung einfliessen und die Rate verzerren.
+                <strong>Warum erst ab 20 Jahren?</strong>
+                Unter 20 verwenden Unfall- und Führerausweisstatistik unterschiedliche
+                Altersklassen. Ein sauberer Vergleich wäre deshalb nicht möglich.
+                Die Führerausweisdaten wurden beim ASTRA für die übrigen Gruppen
+                möglichst passend zur Unfallstatistik aufbereitet.
             </li>
 
             <li>
-                <strong>„Ursächlich beteiligt“</strong>
+                <strong>«Ursächlich beteiligt»</strong>
                 bezeichnet eine polizeiliche Einschätzung im Rahmen der Unfallanalyse
                 und ist nicht mit einer rechtlich festgestellten Schuld gleichzusetzen.
             </li>
@@ -180,42 +228,38 @@
 
             <li>
                 <strong>Einschränkung:</strong>
-                Die tatsächliche Fahrleistung der Altersgruppen ist nicht berücksichtigt.
-                Die Kennzahl entspricht deshalb nicht einem Unfallrisiko pro gefahrenem Kilometer.
+                Die Daten zeigen nicht, wie häufig oder wie weit die einzelnen
+                Altersgruppen tatsächlich Auto fahren.
             </li>
+
         </ul>
+
     </details>
 
 
-    <!-- Absolute Unfallzahlen -->
+    <!-- ========================================
+         Absolute Unfallzahlen
+    ======================================== -->
+
     <section class="absolute-accidents">
 
-        <p>
-            In unserer Untersuchung interessiert uns nicht nur, wer wie oft in der
-            Unfallstatistik auftaucht. Wir wollen wissen, wie sich das Bild verändert, wenn
-            berücksichtigt wird, wie viele Menschen einer Altersgruppe überhaupt einen
-            Führerausweis besitzen – und wie schwer die Unfälle ausfallen, an denen sie
-            beteiligt sind. Die Ausgangsfrage klingt einfach: Wer ist am Steuer tatsächlich
-            häufiger an Unfällen beteiligt – Junge oder Alte? Die Antwort ist komplizierter,
-            als die absoluten Unfallzahlen zunächst vermuten lassen.
-        </p>
+        <h2>Wer taucht häufiger in der Unfallstatistik auf?</h2>
 
         <p>
-            Schauen wir zunächst nur auf die Unfallzahlen, wurden im Jahr 2025 1'996
+            Schauen wir zunächst nur auf die Unfallzahlen: Im Jahr 2025 wurden 1'996
             Personenwagen-Lenkende zwischen 20 und 29 Jahren von der Polizei als
-            ursächlich an einem Unfall mit Personenschaden beteiligt eingestuft. Bei den
-            ab 70-Jährigen sind es 1’590. Auf den ersten Blick scheint es so, als ob unsere
-            Frage damit klar beantwortet werden kann: Junge Erwachsene tauchen
-            wesentlich häufiger in der Unfallstatistik auf als ältere Menschen.
+            ursächlich an einem Unfall mit Personenschaden beteiligt eingestuft.
+            Bei den ab 70-Jährigen waren es 1'590.
         </p>
 
-        <!-- GRAFIK:
-             Balkendiagramm mit absoluten Unfallzahlen.
-             Nur Unfallstatistik, ohne Führerausweise.
-             Caption:
-             «Gezählt werden ursächlich beteiligte PW-Lenkende
-             in Unfällen mit Personenschaden.»
-        -->
+        <p>
+            Auf den ersten Blick scheint die Frage damit beantwortet: Junge Erwachsene
+            tauchen deutlich häufiger in der Unfallstatistik auf als ältere Menschen.
+        </p>
+
+
+        <!-- Grafik: Absolute Unfallzahlen 2025 -->
+
         <figure class="graphic graphic--absolute-accidents">
 
             <div class="chart-container">
@@ -229,6 +273,7 @@
 
         </figure>
 
+
         <p class="highlight-text">
             Doch genau hier beginnt das Problem.
         </p>
@@ -237,23 +282,21 @@
             Die Altersgruppen sind unterschiedlich gross. Die 20- bis 29-Jährigen lassen
             sich deshalb nicht direkt mit den Beteiligten ab 70 Jahren vergleichen.
             Entscheidend ist auch, wie viele Menschen in diesen Altersgruppen überhaupt
-            einen Führerausweis besitzen. Hier hat sich in den vergangenen zehn Jahren
-            einiges verändert. Besonders deutlich zeigt sich das bei den älteren
-            Altersgruppen. Vor 10 Jahren besassen rund 487'000 Menschen zwischen 70
-            und 79 Jahren einen Führerausweis. 2025 waren es bereits rund 677'000. Bei
-            den 80- bis 89-Jährigen stieg die Zahl im selben Zeitraum um 100’00 an und in
-            der Gruppe 90+ hat sie sich gleich mehr als verdoppelt.
+            einen Führerausweis besitzen.
         </p>
 
-        <!-- GRAFIK:
-             Entwicklung der Führerausweisinhaber:innen 2016–2025
-             nach Altersgruppe.
-             2016 und 2025 direkt gegenüberstellen.
+        <p>
+            Hier hat sich in den vergangenen zehn Jahren einiges verändert. Besonders
+            deutlich zeigt sich das bei den älteren Altersgruppen. 2016 besassen rund
+            487'000 Menschen zwischen 70 und 79 Jahren einen Führerausweis.
+            2025 waren es bereits rund 677'000. Bei den 80- bis 89-Jährigen stieg die
+            Zahl im selben Zeitraum um rund 100'000, in der Gruppe 90+ hat sie sich
+            mehr als verdoppelt.
+        </p>
 
-             Aussage:
-             «Heute gibt es deutlich mehr ältere Menschen, die überhaupt
-             als Lenker:innen in der Unfallstatistik auftauchen können.»
-        -->
+
+        <!-- Grafik: Führerausweisinhaber:innen 2016 / 2025 -->
+
         <figure class="graphic graphic--licence-development">
 
             <div class="chart-container">
@@ -270,56 +313,138 @@
     </section>
 
 
-    <!-- Relative Unfallbeteiligung -->
+    <!-- ========================================
+         Relative Unfallbeteiligung
+    ======================================== -->
+
     <section class="relative-accidents">
 
         <p>
             Allein aus einer steigenden Zahl älterer Unfallbeteiligter lässt sich deshalb
-            noch nicht ableiten, dass Autofahren im Alter gefährlicher geworden ist. Steigt
-            die Zahl der Führerausweisinhaber:innen, kann auch die absolute Zahl der
-            Unfallbeteiligungen steigen, ohne dass sich die relative Häufigkeit verändert.
+            noch nicht ableiten, dass Autofahren im Alter gefährlicher geworden ist.
+            Steigt die Zahl der Führerausweisinhaber:innen, kann auch die absolute Zahl
+            der Unfallbeteiligungen zunehmen, ohne dass sich die relative Häufigkeit
+            verändert.
         </p>
 
         <p>
-            Wir setzen nun die Zahl der ursächlich beteiligten PW-Lenkenden ins
-            Verhältnis zur Zahl der Führerausweisinhaber:innen derselben Altersgruppe.
+            Die Zahl der ursächlich beteiligten PW-Lenkenden wird deshalb ins Verhältnis
+            zur Zahl der Führerausweisinhaber:innen derselben Altersgruppe gesetzt.
             Daraus ergibt sich unsere zentrale Kennzahl:
         </p>
 
 
+        <!-- ========================================
+             Bruchdarstellung
+        ======================================== -->
+
+        <figure class="formula-graphic">
+
+            <figcaption class="formula-graphic__caption">
+                So berechnet sich die Kennzahl
+            </figcaption>
+
+
+            <div class="formula-graphic__content">
+
+
+                <!-- Bruch -->
+                <div class="formula-graphic__fraction">
+
+                    <div class="formula-graphic__part">
+
+                        <span class="formula-graphic__small-label">
+                            Zähler
+                        </span>
+
+                        <p class="formula-graphic__text">
+                            Ursächlich beteiligte
+                            <br>
+                            PW-Lenkende
+                        </p>
+
+                    </div>
+
+
+                    <div class="formula-graphic__line"></div>
+
+
+                    <div class="formula-graphic__part">
+
+                        <span class="formula-graphic__small-label">
+                            Nenner
+                        </span>
+
+                        <p class="formula-graphic__text">
+                            Führerausweisinhaber:innen
+                            <br>
+                            derselben Altersgruppe
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Multiplikation -->
+                <div class="formula-graphic__multiply">
+
+                    <span class="formula-graphic__multiply-symbol">
+                        ×
+                    </span>
+
+                    <span class="formula-graphic__multiply-number">
+                        100'000
+                    </span>
+
+                </div>
+
+
+                <!-- Resultat -->
+                <div class="formula-graphic__result">
+
+                    <span class="formula-graphic__small-label">
+                        Ergebnis
+                    </span>
+
+                    <p class="formula-graphic__result-text">
+                        Ursächlich beteiligte PW-Lenkende
+                        pro 100'000 Führerausweisinhaber:innen
+                        der jeweiligen Altersgruppe
+                    </p>
+
+                </div>
+
+            </div>
+
+        </figure>
+
+
+        <!-- Erst Erklärung, dann Diagramm -->
 
         <p>
-            So verändert sich das Bild deutlich. Die Rate steigt nicht einfach mit jedem
-            Lebensjahr weiter an. Stattdessen zeigt sich eine U-förmige Verteilung: Junge
-            Erwachsene weisen eine vergleichsweise hohe Unfallbeteiligung auf. Danach
-            sinkt die Rate über mehrere Altersgruppen hinweg deutlich ab und erreicht im
-            mittleren bis höheren Erwachsenenalter ihren tiefsten Bereich. Erst im hohen
-            Alter dreht sich die Entwicklung wieder. Ab etwa 70 Jahren steigt die relative
-            Unfallbeteiligung erneut an.
+            So verändert sich das Bild deutlich. Die Rate steigt nicht einfach mit
+            zunehmendem Alter an. Stattdessen zeigt sich eine U-förmige Verteilung:
+            Junge Erwachsene weisen eine vergleichsweise hohe Unfallbeteiligung auf.
+            Danach sinkt die Rate über mehrere Altersgruppen hinweg deutlich ab und
+            erreicht im mittleren bis höheren Erwachsenenalter ihren tiefsten Bereich.
+            Erst im hohen Alter dreht sich die Entwicklung wieder. Ab etwa 70 Jahren
+            steigt die relative Unfallbeteiligung erneut an.
         </p>
 
         <p>
-            Junge Erwachsene und sehr alte Fahrer:innen liegen näher beieinander, als die
-            absoluten Unfallzahlen zunächst vermuten lassen. Dieses Bild würde
-            zusätzlich verstärkt, würden die unter 20-Jährigen ebenfalls berücksichtigt
-            werden. Darauf wurde jedoch verzichtet, da die Altersklassen in Unfall- und
-            Führerausweisstatistik nicht deckungsgleich zu erhalten sind und sich deshalb
-            nicht sauber miteinander vergleichen lassen. Bei den über 90-Jährigen steigt
-            die Rate ebenfalls nochmals deutlich an. Diese Altersgruppe ist allerdings
-            vergleichsweise klein. Einzelne zusätzliche Fälle wirken sich deshalb stärker
-            auf die Rate aus als bei grösseren Altersgruppen.
+            Junge Erwachsene und sehr alte Fahrer:innen liegen damit näher beieinander,
+            als die absoluten Unfallzahlen zunächst vermuten lassen. Würden auch die
+            unter 20-Jährigen berücksichtigt, würde sich dieses Bild zusätzlich verstärken.
+            Wegen der unterschiedlichen Altersklassen in den beiden Statistiken wurde auf
+            diesen Vergleich jedoch verzichtet. Bei den 90-Jährigen und Älteren steigt die
+            Rate nochmals deutlich an. Diese Altersgruppe ist allerdings vergleichsweise
+            klein. Einzelne zusätzliche Fälle wirken sich deshalb stärker auf die Rate aus
+            als bei grösseren Altersgruppen.
         </p>
 
-        <!-- GRAFIK / SCROLLYTELLING:
-             Ursächlich beteiligte PW-Lenkende pro 100'000
-             Führerausweisinhaber:innen nach Altersgruppe, 2025.
 
-             U-Form deutlich darstellen.
-
-             Beim weiteren Scrollen:
-             Kurve von 2016 einblenden.
-             2016 und 2025 bleiben gleichzeitig sichtbar.
-        -->
+        <!-- Grafik: Relative Unfallbeteiligung 2025 -->
 
         <figure class="graphic graphic--accident-rate">
 
@@ -329,41 +454,65 @@
 
             <figcaption>
                 Ursächlich beteiligte PW-Lenkende pro 100'000
-                Führerausweisinhaber:innen der jeweiligen Altersgruppe.
+                Führerausweisinhaber:innen nach Altersgruppe, 2025.
             </figcaption>
 
         </figure>
 
-        <div class="graphic graphic--formula">
-            <div class="graphic-placeholder"></div>
-        </div>
-
     </section>
 
 
-    <!-- Vergleich 2016 / 2025 -->
+    <!-- ========================================
+         Vergleich 2016 / 2025
+    ======================================== -->
+
     <section class="year-comparison">
 
+        <!--
+            Nächster geplanter Scroll-Schritt:
+            Zur bestehenden Kurve von 2025 wird die Kurve von 2016 eingeblendet.
+            Beide Linien bleiben sichtbar.
+        -->
+
         <p>
-            Ein Blick auf die Zahlen von 2016 zeigt durchaus erfreuliches: Die relative
-            Unfallbeteiligung lag 2016 in allen betrachteten Altersgruppen höher als 2025.
-            Besonders auffällig ist diese Entwicklung bei den über 70-Jährigen. Heute
-            besitzen deutlich mehr Menschen in dieser Altersgruppe einen Führerausweis
-            als noch 2016. Gleichzeitig liegt ihre relative Unfallbeteiligung tiefer als
-            Damals. Die wachsende Zahl älterer Führerausweisinhaber:innen hat sich also
-            nicht in einem entsprechenden Anstieg der Beteiligungsrate niedergeschlagen.
+            Ein Blick auf die Zahlen von 2016 zeigt Erfreuliches: Die relative
+            Unfallbeteiligung lag damals in allen betrachteten Altersgruppen höher
+            als 2025.
         </p>
 
-        <!-- GRAFIK / SCROLLYTELLING:
-             Dritte Kurve mit dem Zehnjahresdurchschnitt einblenden.
-             Linien für 2016 und 2025 bleiben im Hintergrund sichtbar.
-        -->
-        <div class="graphic graphic--ten-year-average">
-            <div class="graphic-placeholder"></div>
-        </div>
+        <p>
+            Besonders auffällig ist diese Entwicklung bei den über 70-Jährigen,
+            da in diesen Altersgruppen deutlich mehr Personen einen Führerausweis
+            besitzen als noch 2016. Gleichzeitig liegt ihre relative Unfallbeteiligung
+            tiefer als damals.
+        </p>
 
         <p>
-            Der Durchschnitt des Untersuchungszeitraums untermauert das bekannte Bild.
+            Die wachsende Zahl älterer Führerausweisinhaber:innen hat sich also nicht
+            in einem entsprechenden Anstieg der Beteiligungsrate niedergeschlagen.
+        </p>
+
+
+        <!--
+            Später:
+            Zehnjahresdurchschnitt als dritte Linie einblenden.
+            2016 und 2025 bleiben sichtbar.
+        -->
+
+        <div class="graphic graphic--ten-year-average">
+
+            <div class="graphic-placeholder">
+            </div>
+
+        </div>
+
+
+        <p>
+            Auch der Durchschnitt über die gesamten zehn Jahre zeigt dieselbe
+            U-förmige Verteilung. Das Muster ist damit kein Effekt eines einzelnen Jahres.
+        </p>
+
+        <p>
             Die Frage nach dem Alter am Steuer lässt sich nicht mit einem einfachen
             «je älter, desto gefährlicher» beantworten.
         </p>
@@ -371,25 +520,23 @@
     </section>
 
 
-    <!-- Unfallschwere -->
+    <!-- ========================================
+         Unfallschwere
+    ======================================== -->
+
     <section class="accident-severity">
 
         <h2>Unfallschwere</h2>
 
         <p>
-            Doch wie oft jemand in der Statistik auftaucht, erzählt nur die halbe
-            Geschichte. Ebenso entscheidend ist, wie schwer die Unfälle ausfallen.
+            Doch wie oft jemand in der Statistik auftaucht, erzählt nur einen Teil
+            der Geschichte. Ebenso entscheidend ist auch, wie schwer die Unfälle
+            ausfallen.
         </p>
 
-        <!-- GRAFIK / SCROLLYTELLING:
-             Anteil leichter sowie schwerer/tödlicher Unfälle
-             nach Altersgruppe.
 
-             Balken zeigen jeweils 100 % der Beteiligungen.
+        <!-- Grafik: Unfallschwere -->
 
-             Beim Scrollen wachsen die Anteile der schweren und
-             tödlichen Unfälle in einer anderen Farbe aus den Balken.
-        -->
         <figure class="graphic graphic--severity">
 
             <div class="chart-container">
@@ -403,17 +550,33 @@
 
         </figure>
 
+
         <p>
-            Wichtig ist dabei: Die Unfallschwere beschreibt den gesamten Unfall. Sie sagt
-            nicht, dass die ursächlich beteiligte Person selbst schwer verletzt oder getötet
-            wurde. Ein als schwer eingestufter Unfall kann auch bedeuten, dass eine
-            andere beteiligte Person schwere Verletzungen erlitten hat. Trotzdem zeigt
-            sich ein eindeutiger Zusammenhang: Je höher die Altersgruppe, desto grösser
-            ist der Anteil der Beteiligungen an schweren oder tödlichen Unfällen.
+            Hier zeigt sich ein anderes Muster als bei der Unfallhäufigkeit.
+            Der Anteil schwerer und tödlicher Unfälle nimmt mit zunehmendem Alter
+            beinahe durchgehend zu.
         </p>
 
         <p>
-            Bei älteren Fahrer:innen geht es nicht nur nicht nur darum, wie häufig sie in
+            Während bei jungen und mittleren Altersgruppen Unfälle mit Leichtverletzten
+            deutlich überwiegen, wächst der Anteil schwerer Unfallfolgen in den höheren
+            Altersgruppen stetig an.
+        </p>
+
+        <p>
+            Wichtig ist dabei: Die Unfallschwere beschreibt den gesamten Unfall.
+            Sie sagt nicht, dass die ursächlich beteiligte Person selbst schwer verletzt
+            oder getötet wurde.
+        </p>
+
+        <p>
+            Trotzdem zeigt sich ein klarer Zusammenhang: Je höher die Altersgruppe,
+            desto grösser ist der Anteil der Beteiligungen an schweren oder tödlichen
+            Unfällen.
+        </p>
+
+        <p>
+            Bei älteren Fahrer:innen geht es damit nicht nur darum, wie häufig sie in
             der Statistik auftauchen. Wenn sie ursächlich an einem Unfall beteiligt sind,
             handelt es sich auch häufiger um einen Unfall mit schweren Folgen.
         </p>
@@ -421,81 +584,182 @@
     </section>
 
 
-    <!-- Einschränkungen -->
+    <!-- ========================================
+         Was die Daten nicht zeigen
+    ======================================== -->
+
     <section class="limitations">
 
-        <h2>Nicht ersichtlich</h2>
+        <h2>Was die Daten nicht zeigen</h2>
 
         <p>
-            Unsere Berechnung setzt die Unfallbeteiligungen ins Verhältnis zur Zahl der
-            Führerausweisinhaber:innen. Dadurch werden unterschiedlich grosse
-            Altersgruppen vergleichbar. Nicht berücksichtigt wird jedoch, wie viel die
-            einzelnen Altersgruppen tatsächlich fahren. Eine Person, die täglich mit
-            dem Auto unterwegs ist, zählt in unserer Berechnung gleich wie jemand, der
-            nur wenige Male im Jahr fährt.
+            Unsere Berechnung macht unterschiedlich grosse Altersgruppen miteinander
+            vergleichbar. Sie berücksichtigt jedoch nicht, wie häufig die einzelnen
+            Personen tatsächlich Auto fahren.
         </p>
 
         <p>
-            Die verwendete Kennzahl beschreibt deshalb nicht das generelle
-            Unfallrisiko. Sie zeigt, wie häufig Führerausweisinhaber:innen einer
-            Altersgruppe in der Unfallstatistik als ursächlich Beteiligte auftreten.
+            Wer täglich mit dem Auto zur Arbeit fährt, hat mehr Gelegenheiten, in einen
+            Unfall verwickelt zu werden, als jemand, der das Auto nur wenige Male im
+            Monat benutzt. In unserer Berechnung zählen beide Personen jedoch gleich,
+            solange sie einen Führerausweis besitzen.
         </p>
 
         <p>
-            Diese Grenze ist besonders wichtig, wenn junge und ältere Fahrer:innen
-            miteinander verglichen werden. Aus unseren Daten lässt sich nicht ableiten,
-            wie sich das Bild verändern würde, wenn zusätzlich die tatsächlich gefahrenen
-            Kilometer berücksichtigt würden.
+            Die Kennzahl zeigt deshalb nicht das vollständige persönliche Unfallrisiko.
+            Sie zeigt, wie häufig Führerausweisinhaber:innen einer Altersgruppe in der
+            Unfallstatistik als ursächlich Beteiligte auftreten.
+        </p>
+
+        <p>
+            Gerade beim Vergleich zwischen jungen und älteren Fahrer:innen bleibt
+            deshalb offen, wie sich das Bild verändern würde, wenn zusätzlich
+            berücksichtigt werden könnte, wie oft und wie viel sie tatsächlich fahren.
         </p>
 
     </section>
 
 
-    <!-- Fazit -->
+    <!-- ========================================
+         Fazit
+    ======================================== -->
+
     <section class="conclusion">
 
         <h2>Also: Opa, gib den Schlüssel ab?</h2>
 
         <p>
             Die Daten liefern keine klare Altersgrenze, ab der Autofahren plötzlich zum
-            Sicherheitsrisiko wird. Die Unfallbeteiligung steigt nicht einfach mit
-            zunehmendem Alter. Junge Erwachsene weisen ebenfalls hohe Werte auf.
-            Gleichzeitig zeigt der Zehnjahresvergleich, dass die relative Unfallbeteiligung
-            heute in allen untersuchten Altersgruppen tiefer liegt als zu Beginn des
-            Untersuchungszeitraums, obwohl heute deutlich mehr Personen einen
-            Führerausweis besitzen. Bei der Unfallschwere zeigt sich hingegen ein klarerer
-            Zusammenhang mit dem Alter: Je höher die Altersgruppe, desto grösser wird
-            der Anteil der Beteiligungen an schweren oder tödlichen Unfällen.
+            Sicherheitsrisiko wird.
         </p>
 
         <p>
-            Eine eindeutige Antwort auf die Frage, ab welchem Alter jemand zu alt fürs
-            Steuer ist, liefern die Zahlen deshalb nicht. Sie zeigen vielmehr, dass Alter
-            allein zu kurz greift.
+            Die relative Unfallbeteiligung folgt vielmehr einer U-förmigen Verteilung.
+            Gleichzeitig liegt die Beteiligungsrate heute in allen untersuchten
+            Altersgruppen tiefer als noch 2016. Das gilt auch für ältere Fahrer:innen,
+            obwohl insbesondere in diesen Altersgruppen heute deutlich mehr Menschen
+            einen Führerausweis besitzen.
+        </p>
+
+        <p>
+            Bei der Unfallschwere zeigt sich hingegen ein deutlicherer Zusammenhang
+            mit dem Alter: Je höher die Altersgruppe, desto grösser wird der Anteil der
+            Beteiligungen an schweren oder tödlichen Unfällen.
+        </p>
+
+        <p>
+            Eine eindeutige Antwort darauf, wann jemand zu alt fürs Steuer ist, liefern
+            die Zahlen deshalb nicht. Sie zeigen vielmehr, dass das Alter allein dafür
+            nicht ausreicht.
         </p>
 
     </section>
 
 
-    <!-- Abschlussfrage / Slider -->
+    <!-- ========================================
+         Abschlussfrage
+    ======================================== -->
+
     <section class="age-question age-question--final">
 
-        <h2>Würden Sie ihre Antwort nochmals anpassen?</h2>
+        <h2>
+            Würden Sie Ihre Antwort nun noch einmal anpassen?
+        </h2>
 
-        <!-- GRAFIK / INTERAKTION:
-             Regler vom Start erneut anzeigen.
 
-             Diesmal zusätzlich auf dem Strahl:
-             relevante Daten / Kennzahlen einordnen.
-        -->
-        <div class="graphic-placeholder graphic-placeholder--slider-final"></div>
+        <div class="final-age-slider">
+
+
+            <!-- Gewähltes Alter -->
+
+            <div class="age-slider__value">
+
+                <output
+                        id="finalAgeOutput"
+                        for="finalAgeRange"
+                >
+                    75
+                </output>
+
+                <span>Jahre</span>
+
+            </div>
+
+
+            <!-- Slider -->
+
+            <div class="final-age-slider__track">
+
+                <input
+                        type="range"
+                        id="finalAgeRange"
+                        class="age-slider__input"
+                        min="18"
+                        max="100"
+                        value="75"
+                        step="1"
+                >
+
+            </div>
+
+
+            <div class="age-slider__labels">
+                <span>18</span>
+                <span>100</span>
+            </div>
+
+
+            <!-- Liniendiagramm mit aktueller Auswahl -->
+
+            <div class="final-age-result">
+
+                <p class="final-age-result__title">
+                    Ihre Einordnung in der Kurve
+                </p>
+
+                <div class="final-age-chart">
+
+                    <canvas id="finalAgeChart"></canvas>
+
+                </div>
+
+                <p
+                        id="finalAgeChartNote"
+                        class="final-age-chart__note"
+                ></p>
+
+            </div>
+
+
+            <!-- Antwort anpassen -->
+
+            <button
+                    type="button"
+                    id="saveFinalAge"
+                    class="age-slider__button"
+            >
+                Antwort anpassen
+            </button>
+
+
+            <p
+                    id="finalSaveMessage"
+                    class="age-slider__message"
+                    aria-live="polite"
+            ></p>
+
+        </div>
 
     </section>
+
+
 </main>
 
-<!-- Footer-->
+
+<!-- Footer -->
 <footer>
 </footer>
+
 
 </body>
 
