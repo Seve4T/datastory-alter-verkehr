@@ -161,15 +161,16 @@ h1 {
     letter-spacing: -0.03em;
 }
 
+/* Zwischentitel im Artikel */
+
 h2 {
-    margin-top: var(--space-lg);
     margin-bottom: var(--space-sm);
 
-    color: var(--color-orange);
+    color: var(--color-white);
 
-    font-size: var(--font-size-body);
+    font-size: 1.7rem;
     font-weight: var(--font-weight-bold);
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 .age-question h2 {
@@ -441,6 +442,60 @@ section {
 }
 
 /* ========================================
+   7.6 Zweispaltige Datenabschnitte
+======================================== */
+
+/* Einstieg in den Abschnitt:
+   Text links, Visualisierung rechts */
+
+.absolute-accidents__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: var(--column-gap);
+    align-items: start;
+
+    padding-top: var(--space-lg);
+}
+
+
+/* Linke Textspalte */
+
+.absolute-accidents__text {
+    min-width: 0;
+}
+
+.absolute-accidents__text h2 {
+    max-width: 680px;
+}
+
+.absolute-accidents__text p {
+    max-width: 680px;
+}
+
+
+/* Diagramm in der rechten Spalte */
+
+.absolute-accidents__intro .graphic {
+    margin: 0;
+}
+
+.absolute-accidents__intro .chart-container {
+    width: 100%;
+    height: 480px;
+
+    margin: 0 0 var(--space-sm);
+}
+
+
+/* Text, der nach dem Diagramm weiterläuft */
+
+.absolute-accidents__continuation {
+    max-width: 680px;
+
+    margin-top: var(--space-lg);
+}
+
+/* ========================================
    8. Hervorhebungen
 ======================================== */
 
@@ -483,10 +538,12 @@ section {
    10. Datengrundlage
 ======================================== */
 
+/* Ausklappbare methodische Hinweise */
+
 .data-notes {
     max-width: 850px;
 
-    margin-top: 0;
+    margin-top: 0.6rem;
     margin-bottom: var(--space-md);
 }
 
@@ -500,6 +557,9 @@ section {
     line-height: 1.4;
 }
 
+
+/* Liste der Hinweise */
+
 .data-notes ul {
     margin-top: var(--space-sm);
     margin-bottom: 0;
@@ -507,7 +567,16 @@ section {
 }
 
 .data-notes li {
-    margin-bottom: var(--space-sm);
+    margin-bottom: 1.25rem;
+}
+
+
+/* Bezeichnung und Erklärung untereinander */
+
+.data-notes__label {
+    display: block;
+
+    margin-bottom: 0.15rem;
 }
 
 .data-notes li:last-child {
