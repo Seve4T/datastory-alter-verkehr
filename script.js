@@ -188,17 +188,23 @@ async function createAbsoluteAccidentsChart() {
         await loadTrafficData();
 
 
+    // Nur Daten aus dem Jahr 2025 verwenden
+
     const data2025 =
         trafficData.filter(row => {
             return Number(row.year) === 2025;
         });
 
 
+    // Altersgruppen für die X-Achse
+
     const labels =
         data2025.map(row => {
             return row.age_group;
         });
 
+
+    // Anzahl ursächlich beteiligter PW-Lenkender
 
     const values =
         data2025.map(row => {
@@ -208,16 +214,7 @@ async function createAbsoluteAccidentsChart() {
         });
 
 
-    const barColors =
-        labels.map(ageGroup => {
-
-            if (ageGroup === '20-29') {
-                return '#E38500';
-            }
-
-            return '#6594DB';
-        });
-
+    // Balkendiagramm erstellen
 
     new Chart(
         absoluteAccidentsCanvas,
@@ -230,29 +227,39 @@ async function createAbsoluteAccidentsChart() {
                 datasets: [
                     {
                         label:
-                            'Ursächlich Beteiligte',
+                            'Ursächlich beteiligte PW-Lenkende',
 
                         data:
                         values,
 
+                        // Alle Balken einheitlich hellblau
                         backgroundColor:
-                        barColors,
+                            '#6594DB',
+
+                        // Hover-Farbe
+                        hoverBackgroundColor:
+                            '#E38500',
 
                         borderRadius:
-                            4
+                            6,
+
+                        borderSkipped:
+                            false
                     }
                 ]
             },
 
             options: {
-                responsive: true,
+                responsive:
+                    true,
 
                 maintainAspectRatio:
                     false,
 
                 plugins: {
                     legend: {
-                        display: false
+                        display:
+                            false
                     },
 
                     tooltip: {
@@ -267,6 +274,8 @@ async function createAbsoluteAccidentsChart() {
                 },
 
                 scales: {
+
+                    // X-Achse: Altersgruppen
                     x: {
                         grid: {
                             display:
@@ -276,9 +285,32 @@ async function createAbsoluteAccidentsChart() {
                         ticks: {
                             color:
                                 '#FFFCFE'
+                        },
+
+                        title: {
+                            display:
+                                true,
+
+                            text:
+                                'Altersgruppe',
+
+                            color:
+                                '#FFFCFE',
+
+                            font: {
+                                weight:
+                                    'bold'
+                            },
+
+                            padding: {
+                                top:
+                                    12
+                            }
                         }
                     },
 
+
+                    // Y-Achse: Anzahl Beteiligte
                     y: {
                         beginAtZero:
                             true,
@@ -290,7 +322,36 @@ async function createAbsoluteAccidentsChart() {
 
                         ticks: {
                             color:
-                                '#FFFCFE'
+                                '#FFFCFE',
+
+                            callback:
+                                function (value) {
+
+                                    return value.toLocaleString(
+                                        'de-CH'
+                                    );
+                                }
+                        },
+
+                        title: {
+                            display:
+                                true,
+
+                            text:
+                                'Ursächlich beteiligte PW-Lenkende',
+
+                            color:
+                                '#FFFCFE',
+
+                            font: {
+                                weight:
+                                    'bold'
+                            },
+
+                            padding: {
+                                bottom:
+                                    12
+                            }
                         }
                     }
                 }
@@ -311,6 +372,12 @@ const licenceDevelopmentCanvas =
 
 let licenceDevelopmentChart;
 
+
+/*
+ * Das Diagramm zeigt 2016 direkt.
+ * Die Werte von 2025 werden später
+ * abhängig vom Scrollfortschritt eingeblendet.
+ */
 
 async function createLicenceDevelopmentChart() {
 
@@ -352,6 +419,16 @@ async function createLicenceDevelopmentChart() {
         });
 
 
+    /*
+     * 2025 startet bei 0.
+     * Die tatsächlichen Werte werden
+     * beim Scrollen schrittweise eingesetzt.
+     */
+
+    const initialValues2025 =
+        values2025.map(() => 0);
+
+
     licenceDevelopmentChart =
         new Chart(
             licenceDevelopmentCanvas,
@@ -359,10 +436,12 @@ async function createLicenceDevelopmentChart() {
                 type: 'bar',
 
                 data: {
-                    labels:
-                    labels,
+                    labels: labels,
 
                     datasets: [
+
+                        /* 2016 bleibt statisch */
+
                         {
                             label:
                                 '2016',
@@ -370,11 +449,46 @@ async function createLicenceDevelopmentChart() {
                             data:
                             values2016,
 
-                            backgroundColor:
-                                '#6594DB',
+                            backgroundColor: context => {
+
+                                if (context.active) {
+                                    return '#E38500';
+                                }
+
+                                return 'rgba(101, 148, 219, 0.45)';
+                            },
 
                             borderRadius:
-                                4
+                                6,
+
+                            borderSkipped:
+                                false
+                        },
+
+
+                        /* 2025 wird scrollgesteuert */
+
+                        {
+                            label:
+                                '2025',
+
+                            data:
+                            initialValues2025,
+
+                            backgroundColor: context => {
+
+                                if (context.active) {
+                                    return '#E38500';
+                                }
+
+                                return '#6594DB';
+                            },
+
+                            borderRadius:
+                                6,
+
+                            borderSkipped:
+                                false
                         }
                     ]
                 },
@@ -385,6 +499,17 @@ async function createLicenceDevelopmentChart() {
 
                     maintainAspectRatio:
                         false,
+
+
+                    /*
+                     * Chart.js soll nicht selbst animieren.
+                     * Die Animation wird vollständig
+                     * durch den Scrollfortschritt gesteuert.
+                     */
+
+                    animation:
+                        false,
+
 
                     plugins: {
                         legend: {
@@ -412,6 +537,7 @@ async function createLicenceDevelopmentChart() {
                             }
                         }
                     },
+
 
                     scales: {
                         x: {
@@ -454,15 +580,25 @@ async function createLicenceDevelopmentChart() {
         );
 
 
-    observeLicenceChart(
+    /*
+     * Nach dem Erstellen des Charts
+     * wird die Scrollsteuerung aktiviert.
+     */
+
+    initLicenceScrollAnimation(
         values2025
     );
 }
 
 
-// 2025 beim Scrollen ergänzen
+/*
+ * Scrollgesteuerte Animation
+ *
+ * Die 2025-Balken wachsen abhängig davon,
+ * wie weit die Grafik ins Sichtfeld scrollt.
+ */
 
-function observeLicenceChart(
+function initLicenceScrollAnimation(
     values2025
 ) {
 
@@ -472,64 +608,173 @@ function observeLicenceChart(
         );
 
 
-    const observer =
-        new IntersectionObserver(
-            entries => {
+    if (
+        !licenceGraphic
+        || !licenceDevelopmentChart
+    ) {
+        return;
+    }
 
-                entries.forEach(entry => {
 
-                    if (
-                        entry.isIntersecting
-                    ) {
+    /*
+     * Begrenzung eines Wertes
+     * auf den Bereich 0 bis 1.
+     */
 
-                        showLicenceData2025(
-                            values2025
-                        );
+    const clamp = value => {
 
-                        observer.unobserve(
-                            licenceGraphic
-                        );
-                    }
+        return Math.min(
+            Math.max(
+                value,
+                0
+            ),
+            1
+        );
+    };
+
+
+    /*
+     * Weicher Bewegungsverlauf,
+     * ähnlich wie beim Hero.
+     */
+
+    const easeInOut =
+        progress => {
+
+            return (
+                progress
+                * progress
+                * (3 - 2 * progress)
+            );
+        };
+
+
+    const updateLicenceChart =
+        () => {
+
+            const rect =
+                licenceGraphic
+                    .getBoundingClientRect();
+
+
+            /*
+             * Animation startet,
+             * wenn die Grafik ungefähr
+             * unten ins Sichtfeld kommt.
+             */
+
+            const animationStart =
+                window.innerHeight * 0.85;
+
+
+            /*
+             * Animation ist abgeschlossen,
+             * wenn die Grafik deutlich
+             * weiter nach oben gescrollt wurde.
+             */
+
+            const animationEnd =
+                window.innerHeight * 0.45;
+
+
+            const rawProgress =
+                clamp(
+                    (
+                        animationStart
+                        - rect.top
+                    )
+                    /
+                    (
+                        animationStart
+                        - animationEnd
+                    )
+                );
+
+
+            const progress =
+                easeInOut(
+                    rawProgress
+                );
+
+
+            /*
+             * Jeder 2025-Wert wächst
+             * proportional zum Scrollfortschritt.
+             */
+
+            const currentValues =
+                values2025.map(value => {
+
+                    return value * progress;
                 });
-            },
 
-            {
-                threshold: 0.6
+
+            licenceDevelopmentChart
+                .data
+                .datasets[1]
+                .data =
+                currentValues;
+
+
+            /*
+             * 'none' verhindert,
+             * dass Chart.js zusätzlich
+             * eine eigene Animation ausführt.
+             */
+
+            licenceDevelopmentChart.update(
+                'none'
+            );
+        };
+
+
+    /*
+     * Wie beim Hero bündeln wir
+     * Scroll-Events über requestAnimationFrame.
+     */
+
+    let ticking =
+        false;
+
+
+    const requestLicenceUpdate =
+        () => {
+
+            if (!ticking) {
+
+                window.requestAnimationFrame(
+                    () => {
+
+                        updateLicenceChart();
+
+                        ticking =
+                            false;
+                    }
+                );
+
+
+                ticking =
+                    true;
             }
-        );
+        };
 
 
-    observer.observe(
-        licenceGraphic
+    window.addEventListener(
+        'scroll',
+        requestLicenceUpdate,
+        { passive: true }
     );
-}
 
 
-function showLicenceData2025(
-    values2025
-) {
-
-    licenceDevelopmentChart
-        .data
-        .datasets
-        .push(
-            {
-                label:
-                    '2025',
-
-                data:
-                values2025,
-
-                backgroundColor:
-                    '#E38500',
-
-                borderRadius:
-                    4
-            }
-        );
+    window.addEventListener(
+        'resize',
+        requestLicenceUpdate
+    );
 
 
-    licenceDevelopmentChart.update();
+    /* Anfangszustand setzen */
+
+    updateLicenceChart();
 }
 
 
@@ -654,6 +899,7 @@ async function createAccidentRateChart() {
 
                             backgroundColor:
                                 '#6594DB',
+
 
                             pointBackgroundColor:
                             pointColors,

@@ -207,12 +207,15 @@ a {
     text-decoration: none;
 }
 
+/* Bildunterschriften unter allen Grafiken */
+
 figcaption {
     max-width: 750px;
 
-    color: var(--color-blue);
+    color: var(--color-white);
 
-    font-size: var(--font-size-small);
+    font-size: 1rem;
+    font-weight: var(--font-weight-regular);
     line-height: 1.5;
 }
 
@@ -477,6 +480,7 @@ section {
 
 .absolute-accidents__intro .graphic {
     margin: 0;
+    padding-top: 1.5rem;
 }
 
 .absolute-accidents__intro .chart-container {
@@ -493,6 +497,53 @@ section {
     max-width: 680px;
 
     margin-top: var(--space-lg);
+}
+
+/* ========================================
+   7.7 Breite Datenabschnitte
+======================================== */
+
+/* Weiterführender Text über die gesamte Inhaltsbreite */
+
+.absolute-accidents__continuation {
+    width: 100%;
+    max-width: none;
+
+    margin-top: var(--space-xl);
+}
+
+.absolute-accidents__continuation h2,
+.absolute-accidents__continuation p {
+    width: 100%;
+    max-width: none;
+}
+
+
+/* Grosse Diagramme nutzen die gesamte Containerbreite */
+
+.graphic--licence-development {
+    width: 100%;
+    max-width: none;
+
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.graphic--licence-development .chart-container {
+    width: 100%;
+    max-width: none;
+    height: 560px;
+
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-sm);
+}
+
+/* Relative Unfallbeteiligung:
+   Text nutzt ebenfalls die volle Containerbreite */
+
+.relative-accidents > p {
+    width: 100%;
+    max-width: none;
 }
 
 /* ========================================
@@ -588,7 +639,10 @@ section {
 ======================================== */
 
 .graphic {
-    margin-block: var(--space-lg);
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .chart-container {
