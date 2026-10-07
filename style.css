@@ -257,9 +257,20 @@ figcaption {
    6. Sections
 ======================================== */
 
+/*
+   Sections erhalten keinen automatischen
+   Abstand oben und unten.
+   Die Abstände werden dort gesetzt,
+   wo sie inhaltlich wirklich benötigt werden.
+*/
+
 section {
-    padding-block: var(--space-md);
+    padding-block: 0;
 }
+
+
+/* Grössere Story-Bereiche können bewusst
+   zusätzlichen Abstand erhalten. */
 
 .story-section {
     padding-block: var(--space-xl);
@@ -377,13 +388,16 @@ section {
    7.5 Artikel-Einstieg
 ======================================== */
 
+/* Text links, Altersfrage rechts */
+
 .article-start {
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
     gap: var(--column-gap);
     align-items: start;
 
-    padding-block: var(--space-xl);
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-md);
 }
 
 
@@ -398,17 +412,34 @@ section {
 }
 
 
+/* Gleichmässiger Abstand zwischen den Textabsätzen */
+
+.article-start__text p + p {
+    margin-top: 0;
+}
+
+
+/* Letzter Textabsatz geht direkt in die Datengrundlage über */
+
+.article-start__text p:last-of-type {
+    margin-bottom: 0;
+}
+
+
 /* Rechte Spalte mit Altersfrage */
 
 .article-start .age-question {
     width: 100%;
     max-width: none;
+
+    padding-top: 1.25rem;
 }
 
 .article-start .age-slider {
     width: 100%;
     max-width: none;
 }
+
 /* ========================================
    8. Hervorhebungen
 ======================================== */
@@ -629,25 +660,33 @@ section {
     max-width: 1100px;
 }
 
+
+/* Frage über dem Slider */
+
 .age-question__label {
     display: block;
 
     max-width: 700px;
-
     margin-bottom: var(--space-md);
 
     font-size: 1.5rem;
 }
+
+
+/* Gesamter Slider-Bereich */
 
 .age-slider {
     width: 100%;
     max-width: 900px;
 }
 
+
+/* Grosse Anzeige des gewählten Alters */
+
 .age-slider__value {
     display: flex;
     align-items: baseline;
-    gap: var(--space-xs);
+    gap: 0.6rem;
 
     margin-bottom: var(--space-md);
 }
@@ -660,11 +699,18 @@ section {
     line-height: 1;
 }
 
-.age-slider__value span {
-    color: var(--color-blue);
+/* Einheit bewusst zurückhaltender als die Zahl */
 
-    font-weight: var(--font-weight-bold);
+.age-slider__value span {
+    color: var(--color-white);
+
+    font-size: 1.2rem;
+    font-weight: var(--font-weight-regular);
+    line-height: 1;
 }
+
+
+/* Range-Slider */
 
 .age-slider__input {
     width: 100%;
@@ -674,18 +720,26 @@ section {
     accent-color: var(--color-orange);
 }
 
+
+/* Minimum und Maximum des Sliders */
+
 .age-slider__labels {
     display: flex;
     justify-content: space-between;
 
     width: 100%;
 
-    margin-top: var(--space-xs);
+    margin-top: 0.6rem;
 
-    color: var(--color-blue);
+    color: var(--color-white);
 
-    font-size: var(--font-size-small);
+    font-size: 1.05rem;
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
 }
+
+
+/* Button zum Festlegen der Antwort */
 
 .age-slider__button {
     margin-top: var(--space-md);
@@ -705,6 +759,9 @@ section {
 .age-slider__button:hover {
     opacity: 0.9;
 }
+
+
+/* Rückmeldung nach dem Speichern */
 
 .age-slider__message {
     margin-top: var(--space-sm);
