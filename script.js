@@ -107,7 +107,7 @@ saveAgeButton.addEventListener('click', () => {
         selectedAge;
 
     saveMessage.textContent =
-        `Deine Antwort wurde gespeichert: ${selectedAge} Jahre.`;
+        `Vielen Dank. Ihre Antwort: ${selectedAge} Jahre. Wir kommen am Ende des Artikels darauf zurück.`;
 
     finalSaveMessage.textContent =
         '';
@@ -137,10 +137,10 @@ saveFinalAgeButton.addEventListener('click', () => {
         selectedAge;
 
     finalSaveMessage.textContent =
-        `Deine Antwort wurde angepasst: ${selectedAge} Jahre.`;
+        `Ihre Antwort wurde angepasst: ${selectedAge} Jahre.`;
 
     saveMessage.textContent =
-        `Deine aktuelle Antwort: ${selectedAge} Jahre.`;
+        `Ihre aktuelle Antwort: ${selectedAge} Jahre.`;
 
     updateFinalAgeChart(
         Number(selectedAge)
@@ -1585,3 +1585,403 @@ createFinalAgeChart()
     .catch(error => {
         console.error(error);
     });
+
+
+// ========================================
+// Scroll-Hero
+// ========================================
+
+const heroScroll =
+    document.querySelector('.hero-scroll');
+
+const heroMap =
+    document.querySelector('.hero__map');
+
+const heroContent =
+    document.querySelector('.hero__content');
+
+const heroLead =
+    document.querySelector('.hero__lead');
+
+
+if (
+    heroScroll
+    && heroMap
+    && heroContent
+    && heroLead
+) {
+
+    fetch('assets/images/Karte_Hellblau.svg')
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    'Die Schweizkarte konnte nicht geladen werden.'
+                );
+            }
+
+            return response.text();
+
+        })
+
+        .then(svgCode => {
+
+            // SVG direkt in den Hero einsetzen
+            heroMap.innerHTML =
+                svgCode;
+
+
+            const heroSvg =
+                heroMap.querySelector('svg');
+
+
+            if (!heroSvg) {
+                return;
+            }
+
+
+            // SVG soll den gesamten Hero ausfüllen
+            heroSvg.setAttribute(
+                'preserveAspectRatio',
+                'xMidYMid slice'
+            );
+
+
+            // Ursprüngliche ViewBox aus der SVG lesen
+            const viewBoxValues =
+                heroSvg
+                    .getAttribute('viewBox')
+                    .split(/\s+/)
+                    .map(Number);
+
+
+            const originalX =
+                viewBoxValues[0];
+
+            const originalY =
+                viewBoxValues[1];
+
+
+            /*
+             * Startausschnitt
+             *
+             * Die Karte ist bereits etwas vergrössert
+             * und nach oben links verschoben.
+             */
+
+            const startViewBox = {
+                x: originalX + 40,
+                y: originalY + 35,
+                width: 1120,
+                height: 630
+            };
+
+
+            /*
+             * Zielpunkt des Zooms
+             *
+             * Diesen Punkt haben wir direkt
+             * in der SVG bestimmt.
+             */
+
+            const targetCenterX =
+                591;
+
+            const targetCenterY =
+                402;
+
+
+            /*
+             * Grösse des finalen Ausschnitts.
+             *
+             * Je kleiner die Werte,
+             * desto stärker der Zoom.
+             */
+
+            const endWidth =
+                15;
+
+            const endHeight =
+                15;
+
+
+            const endViewBox = {
+                x:
+                    targetCenterX
+                    - endWidth / 2,
+
+                y:
+                    targetCenterY
+                    - endHeight / 2,
+
+                width:
+                endWidth,
+
+                height:
+                endHeight
+            };
+
+
+            // Hilfsfunktion für Zwischenwerte
+
+            const interpolate = (
+                start,
+                end,
+                progress
+            ) => {
+
+                return (
+                    start
+                    + (end - start)
+                    * progress
+                );
+            };
+
+
+            // Natürlicherer Zoomverlauf
+
+            const easeInOut =
+                progress => {
+
+                    return (
+                        progress
+                        * progress
+                        * (3 - 2 * progress)
+                    );
+                };
+
+
+            const updateHero = () => {
+
+                const rect =
+                    heroScroll
+                        .getBoundingClientRect();
+
+
+                const scrollDistance =
+                    heroScroll.offsetHeight
+                    - window.innerHeight;
+
+
+                /*
+                 * Gesamter Scrollfortschritt
+                 * zwischen 0 und 1
+                 */
+
+                const rawProgress =
+                    Math.min(
+                        Math.max(
+                            -rect.top
+                            / scrollDistance,
+                            0
+                        ),
+                        1
+                    );
+
+
+                /*
+                 * Der Zoom soll bereits bei 72 %
+                 * abgeschlossen sein.
+                 *
+                 * Danach bleibt die Karte ruhig,
+                 * während der Lead eingeblendet wird.
+                 */
+
+                const zoomEnd =
+                    0.72;
+
+
+                const normalizedZoomProgress =
+                    Math.min(
+                        rawProgress / zoomEnd,
+                        1
+                    );
+
+
+                const zoomProgress =
+                    easeInOut(
+                        normalizedZoomProgress
+                    );
+
+
+                // Aktuelle ViewBox berechnen
+
+                const currentX =
+                    interpolate(
+                        startViewBox.x,
+                        endViewBox.x,
+                        zoomProgress
+                    );
+
+
+                const currentY =
+                    interpolate(
+                        startViewBox.y,
+                        endViewBox.y,
+                        zoomProgress
+                    );
+
+
+                const currentWidth =
+                    interpolate(
+                        startViewBox.width,
+                        endViewBox.width,
+                        zoomProgress
+                    );
+
+
+                const currentHeight =
+                    interpolate(
+                        startViewBox.height,
+                        endViewBox.height,
+                        zoomProgress
+                    );
+
+
+                // SVG-Ausschnitt verändern
+
+                heroSvg.setAttribute(
+                    'viewBox',
+                    `${currentX} ${currentY} ${currentWidth} ${currentHeight}`
+                );
+
+
+                /*
+                 * Titel und Untertitel
+                 * relativ früh ausblenden.
+                 */
+
+                const textOpacity =
+                    Math.max(
+                        1 - rawProgress * 2.5,
+                        0
+                    );
+
+
+                heroContent.style.opacity =
+                    textOpacity;
+
+
+                /*
+                 * Titel beim Ausblenden
+                 * leicht nach oben bewegen.
+                 */
+
+                const textMove =
+                    rawProgress * -30;
+
+
+                heroContent.style.transform =
+                    `translateY(${textMove}px)`;
+
+
+                /*
+                 * Lead am Ende des Zooms einblenden.
+                 *
+                 * Start: 72 %
+                 * Komplett sichtbar: 84 %
+                 */
+
+                const leadStart =
+                    0.72;
+
+                const leadEnd =
+                    0.84;
+
+
+                const leadProgress =
+                    Math.min(
+                        Math.max(
+                            (
+                                rawProgress
+                                - leadStart
+                            )
+                            /
+                            (
+                                leadEnd
+                                - leadStart
+                            ),
+                            0
+                        ),
+                        1
+                    );
+
+
+                heroLead.style.opacity =
+                    leadProgress;
+
+
+                /*
+                 * Lead fährt beim Einblenden
+                 * leicht von unten nach oben.
+                 */
+
+                const leadMove =
+                    (1 - leadProgress) * 30;
+
+
+                heroLead.style.transform =
+                    `translateY(${leadMove}px)`;
+
+            };
+
+
+            /*
+             * Scroll-Events über
+             * requestAnimationFrame bündeln.
+             */
+
+            let ticking =
+                false;
+
+
+            const requestHeroUpdate =
+                () => {
+
+                    if (!ticking) {
+
+                        window.requestAnimationFrame(
+                            () => {
+
+                                updateHero();
+
+                                ticking =
+                                    false;
+                            }
+                        );
+
+
+                        ticking =
+                            true;
+                    }
+                };
+
+
+            window.addEventListener(
+                'scroll',
+                requestHeroUpdate,
+                { passive: true }
+            );
+
+
+            window.addEventListener(
+                'resize',
+                requestHeroUpdate
+            );
+
+
+            // Anfangszustand setzen
+
+            updateHero();
+
+        })
+
+        .catch(error => {
+
+            console.error(error);
+
+        });
+
+}

@@ -37,119 +37,154 @@
 
 <body>
 
-<!-- Header -->
-<header>
-</header>
 
+<!-- ========================================
+     Hauptinhalt
+======================================== -->
 
-<!-- Main -->
 <main>
-
-
     <!-- ========================================
-         Einstieg
-    ======================================== -->
+     Scroll-Hero
+======================================== -->
 
-    <section class="intro">
+    <div class="hero-scroll">
 
-        <h1>Opa, gib den Schlüssel ab!</h1>
+        <header class="hero">
 
-        <p class="intro__lead">
-            Was zehn Jahre Schweizer Unfalldaten über Alter und Fahrsicherheit zeigen
-        </p>
+            <div
+                    class="hero__map"
+                    aria-hidden="true"
+            ></div>
 
-        <p>
-            Mit 18 Jahren beginnt für viele die Freiheit auf vier Rädern. Mit dem Erreichen
-            der Volljährigkeit erteilt einem der Staat das Recht, selbstständig Auto zu fahren.
-            Eine Obergrenze gibt es in der Schweiz keine. Deshalb stellt sich die Frage:
-            Gibt es ein Alter, ab dem Autofahren zum Sicherheitsrisiko wird?
-        </p>
+            <div class="hero__content container">
 
-        <p>
-            Wer in der Schweiz die Autoprüfung besteht und die Probezeit hinter sich hat,
-            erhält grundsätzlich einen unbefristeten Führerausweis. Eine regelmässige
-            Erneuerung des Dokuments gibt es nicht. Erst mit dem 75. Geburtstag ändert
-            sich das: Inhaber:innen eines Auto- oder Motorradführerausweises müssen
-            sich danach alle zwei Jahre verkehrsmedizinisch untersuchen lassen. Dabei
-            wird geprüft, ob die gesundheitlichen Voraussetzungen zum Fahren weiterhin
-            erfüllt sind.
-        </p>
+                <h1>
+                    Opa, gib den Schlüssel ab!
+                </h1>
 
-        <p>
-            Kaum ein Thema im Strassenverkehr wird so schnell mit dem Alter verbunden
-            wie Unfälle. Bei jungen Fahrer:innen ist von fehlender Erfahrung die Rede, bei
-            älteren von nachlassender Reaktionsfähigkeit. Doch was davon zeigt sich
-            tatsächlich in den Unfallzahlen? Wir haben die Schweizer Unfallstatistik der
-            Jahre 2016 bis 2025 ausgewertet und mit weiteren Daten verglichen.
-        </p>
-
-    </section>
-
-
-    <!-- ========================================
-         Erste Frage
-    ======================================== -->
-
-    <section class="age-question">
-
-        <h2>Was denken Sie?</h2>
-
-        <label
-                for="ageRange"
-                class="age-question__label"
-        >
-            Bis zu welchem Alter sollte das Autofahren erlaubt sein?
-        </label>
-
-        <div class="age-slider">
-
-            <div class="age-slider__value">
-
-                <output
-                        id="ageOutput"
-                        for="ageRange"
-                >
-                    75
-                </output>
-
-                <span>Jahre</span>
+                <p class="article-subtitle">
+                    Was zehn Jahre Schweizer Unfalldaten über Alter und Fahrsicherheit zeigen
+                </p>
 
             </div>
 
 
-            <input
-                    type="range"
-                    id="ageRange"
-                    class="age-slider__input"
-                    min="18"
-                    max="100"
-                    value="75"
-                    step="1"
-            >
+            <!-- Lead -->
 
+            <div class="hero__lead-layer">
 
-            <div class="age-slider__labels">
-                <span>18</span>
-                <span>100</span>
+                <div class="container">
+
+                    <p class="hero__lead">
+                        Mit 18 Jahren beginnt für viele die Freiheit auf vier Rädern. Mit dem Erreichen
+                        der Volljährigkeit erteilt einem der Staat das Recht, selbstständig Auto zu fahren.
+                        Eine Obergrenze gibt es in der Schweiz keine. Deshalb stellt sich die Frage:
+                        Gibt es ein Alter, ab dem Autofahren zum Sicherheitsrisiko wird?
+                    </p>
+
+                </div>
+
             </div>
 
+        </header>
 
-            <button
-                    type="button"
-                    id="saveAge"
-                    class="age-slider__button"
-            >
-                Antwort speichern
-            </button>
+    </div>
+
+    <!-- ========================================
+         Artikel-Einstieg
+    ======================================== -->
+
+    <section class="article-start container">
 
 
-            <p
-                    id="saveMessage"
-                    class="age-slider__message"
-                    aria-live="polite"
-            ></p>
+        <!-- Linke Spalte: Text -->
+
+        <div class="article-start__text">
+
+            <p>
+                Wer in der Schweiz die Autoprüfung besteht und die Probezeit hinter sich hat,
+                erhält grundsätzlich einen unbefristeten Führerausweis. Eine regelmässige
+                Erneuerung des Dokuments gibt es nicht. Erst mit dem 75. Geburtstag ändert
+                sich das: Inhaber:innen eines Auto- oder Motorradführerausweises müssen
+                sich danach alle zwei Jahre verkehrsmedizinisch untersuchen lassen. Dabei
+                wird geprüft, ob die gesundheitlichen Voraussetzungen zum Fahren weiterhin
+                erfüllt sind.
+            </p>
+
+            <p>
+                Kaum ein Thema im Strassenverkehr wird so schnell mit dem Alter verbunden
+                wie Unfälle. Bei jungen Fahrer:innen ist von fehlender Erfahrung die Rede,
+                bei älteren von nachlassender Reaktionsfähigkeit. Doch was davon zeigt sich
+                tatsächlich in den Unfallzahlen? Wir haben die Schweizer Unfallstatistik der
+                Jahre 2016 bis 2025 ausgewertet und mit weiteren Daten verglichen.
+            </p>
 
         </div>
+
+
+        <!-- Rechte Spalte: Altersfrage -->
+
+        <aside class="age-question">
+
+            <h2>
+                Was denken Sie?
+            </h2>
+
+            <label
+                    for="ageRange"
+                    class="age-question__label"
+            >
+                Bis zu welchem Alter sollte das Autofahren erlaubt sein?
+            </label>
+
+            <div class="age-slider">
+
+                <div class="age-slider__value">
+
+                    <output
+                            id="ageOutput"
+                            for="ageRange"
+                    >
+                        75
+                    </output>
+
+                    <span>Jahre</span>
+
+                </div>
+
+                <input
+                        type="range"
+                        id="ageRange"
+                        class="age-slider__input"
+                        min="18"
+                        max="100"
+                        value="75"
+                        step="1"
+                        aria-label="Gewünschtes Höchstalter für das Autofahren"
+                >
+
+                <div class="age-slider__labels">
+                    <span>18</span>
+                    <span>100</span>
+                </div>
+
+                <button
+                        type="button"
+                        id="saveAge"
+                        class="age-slider__button"
+                >
+                    Festlegen
+                </button>
+
+                <p
+                        id="saveMessage"
+                        class="age-slider__message"
+                        aria-live="polite"
+                ></p>
+
+            </div>
+
+        </aside>
 
     </section>
 
@@ -158,7 +193,7 @@
          Einführung in die Untersuchung
     ======================================== -->
 
-    <section class="story-introduction">
+    <section class="story-introduction container">
 
         <p>
             In unserer Untersuchung interessiert uns nicht nur, wer wie oft in der
@@ -181,69 +216,75 @@
          Hinweise zur Datengrundlage
     ======================================== -->
 
-    <details class="data-notes">
+    <div class="container">
 
-        <summary>
-            Hinweise zur Datengrundlage
-        </summary>
+        <details class="data-notes">
 
-        <ul>
+            <summary>
+                Hinweise zur Datengrundlage
+            </summary>
 
-            <li>
-                <strong>Zeitraum:</strong>
-                Die Auswertung umfasst die Jahre 2016 bis 2025.
-            </li>
+            <ul>
 
-            <li>
-                <strong>Untersuchungsgruppe:</strong>
-                Berücksichtigt werden Personenwagen-Lenkende, die in der
-                Unfallstatistik als ursächlich beteiligt erfasst sind.
-            </li>
+                <li>
+                    <strong>Zeitraum:</strong>
+                    Die Auswertung umfasst die Jahre 2016 bis 2025.
+                </li>
 
-            <li>
-                <strong>Altersgruppen:</strong>
-                Verglichen werden 20–29, 30–39, 40–49, 50–59,
-                60–69, 70–79, 80–89 und 90+.
-            </li>
+                <li>
+                    <strong>Untersuchungsgruppe:</strong>
+                    Berücksichtigt werden Personenwagen-Lenkende, die in der
+                    Unfallstatistik als ursächlich beteiligt erfasst sind.
+                </li>
 
-            <li>
-                <strong>Warum erst ab 20 Jahren?</strong>
-                Unter 20 verwenden Unfall- und Führerausweisstatistik unterschiedliche
-                Altersklassen. Ein sauberer Vergleich wäre deshalb nicht möglich.
-                Die Führerausweisdaten wurden beim ASTRA für die übrigen Gruppen
-                möglichst passend zur Unfallstatistik aufbereitet.
-            </li>
+                <li>
+                    <strong>Altersgruppen:</strong>
+                    Verglichen werden 20–29, 30–39, 40–49, 50–59,
+                    60–69, 70–79, 80–89 und 90+.
+                </li>
 
-            <li>
-                <strong>«Ursächlich beteiligt»</strong>
-                bezeichnet eine polizeiliche Einschätzung im Rahmen der Unfallanalyse
-                und ist nicht mit einer rechtlich festgestellten Schuld gleichzusetzen.
-            </li>
+                <li>
+                    <strong>Warum erst ab 20 Jahren?</strong>
+                    Unter 20 verwenden Unfall- und Führerausweisstatistik unterschiedliche
+                    Altersklassen. Ein sauberer Vergleich wäre deshalb nicht möglich.
+                    Die Führerausweisdaten wurden beim ASTRA für die übrigen Gruppen
+                    möglichst passend zur Unfallstatistik aufbereitet.
+                </li>
 
-            <li>
-                <strong>Unfallschwere:</strong>
-                Unterschieden wird zwischen Unfällen mit Leichtverletzten,
-                Schwerverletzten und Getöteten.
-            </li>
+                <li>
+                    <strong>«Ursächlich beteiligt»</strong>
+                    bezeichnet eine polizeiliche Einschätzung im Rahmen der Unfallanalyse
+                    und ist nicht mit einer rechtlich festgestellten Schuld gleichzusetzen.
+                </li>
 
-            <li>
-                <strong>Einschränkung:</strong>
-                Die Daten zeigen nicht, wie häufig oder wie weit die einzelnen
-                Altersgruppen tatsächlich Auto fahren.
-            </li>
+                <li>
+                    <strong>Unfallschwere:</strong>
+                    Unterschieden wird zwischen Unfällen mit Leichtverletzten,
+                    Schwerverletzten und Getöteten.
+                </li>
 
-        </ul>
+                <li>
+                    <strong>Einschränkung:</strong>
+                    Die Daten zeigen nicht, wie häufig oder wie weit die einzelnen
+                    Altersgruppen tatsächlich Auto fahren.
+                </li>
 
-    </details>
+            </ul>
+
+        </details>
+
+    </div>
 
 
     <!-- ========================================
          Absolute Unfallzahlen
     ======================================== -->
 
-    <section class="absolute-accidents">
+    <section class="absolute-accidents container">
 
-        <h2>Wer taucht häufiger in der Unfallstatistik auf?</h2>
+        <h2>
+            Wer taucht häufiger in der Unfallstatistik auf?
+        </h2>
 
         <p>
             Schauen wir zunächst nur auf die Unfallzahlen: Im Jahr 2025 wurden 1'996
@@ -263,7 +304,9 @@
         <figure class="graphic graphic--absolute-accidents">
 
             <div class="chart-container">
+
                 <canvas id="absoluteAccidentsChart"></canvas>
+
             </div>
 
             <figcaption>
@@ -300,7 +343,9 @@
         <figure class="graphic graphic--licence-development">
 
             <div class="chart-container">
+
                 <canvas id="licenceDevelopmentChart"></canvas>
+
             </div>
 
             <figcaption>
@@ -317,7 +362,7 @@
          Relative Unfallbeteiligung
     ======================================== -->
 
-    <section class="relative-accidents">
+    <section class="relative-accidents container">
 
         <p>
             Allein aus einer steigenden Zahl älterer Unfallbeteiligter lässt sich deshalb
@@ -349,6 +394,7 @@
 
 
                 <!-- Bruch -->
+
                 <div class="formula-graphic__fraction">
 
                     <div class="formula-graphic__part">
@@ -387,6 +433,7 @@
 
 
                 <!-- Multiplikation -->
+
                 <div class="formula-graphic__multiply">
 
                     <span class="formula-graphic__multiply-symbol">
@@ -401,6 +448,7 @@
 
 
                 <!-- Resultat -->
+
                 <div class="formula-graphic__result">
 
                     <span class="formula-graphic__small-label">
@@ -419,8 +467,6 @@
 
         </figure>
 
-
-        <!-- Erst Erklärung, dann Diagramm -->
 
         <p>
             So verändert sich das Bild deutlich. Die Rate steigt nicht einfach mit
@@ -449,7 +495,9 @@
         <figure class="graphic graphic--accident-rate">
 
             <div class="chart-container">
+
                 <canvas id="accidentRateChart"></canvas>
+
             </div>
 
             <figcaption>
@@ -466,13 +514,7 @@
          Vergleich 2016 / 2025
     ======================================== -->
 
-    <section class="year-comparison">
-
-        <!--
-            Nächster geplanter Scroll-Schritt:
-            Zur bestehenden Kurve von 2025 wird die Kurve von 2016 eingeblendet.
-            Beide Linien bleiben sichtbar.
-        -->
+    <section class="year-comparison container">
 
         <p>
             Ein Blick auf die Zahlen von 2016 zeigt Erfreuliches: Die relative
@@ -492,12 +534,6 @@
             in einem entsprechenden Anstieg der Beteiligungsrate niedergeschlagen.
         </p>
 
-
-        <!--
-            Später:
-            Zehnjahresdurchschnitt als dritte Linie einblenden.
-            2016 und 2025 bleiben sichtbar.
-        -->
 
         <div class="graphic graphic--ten-year-average">
 
@@ -524,9 +560,11 @@
          Unfallschwere
     ======================================== -->
 
-    <section class="accident-severity">
+    <section class="accident-severity container">
 
-        <h2>Unfallschwere</h2>
+        <h2>
+            Unfallschwere
+        </h2>
 
         <p>
             Doch wie oft jemand in der Statistik auftaucht, erzählt nur einen Teil
@@ -540,7 +578,9 @@
         <figure class="graphic graphic--severity">
 
             <div class="chart-container">
+
                 <canvas id="severityChart"></canvas>
+
             </div>
 
             <figcaption>
@@ -588,9 +628,11 @@
          Was die Daten nicht zeigen
     ======================================== -->
 
-    <section class="limitations">
+    <section class="limitations container">
 
-        <h2>Was die Daten nicht zeigen</h2>
+        <h2>
+            Was die Daten nicht zeigen
+        </h2>
 
         <p>
             Unsere Berechnung macht unterschiedlich grosse Altersgruppen miteinander
@@ -624,9 +666,11 @@
          Fazit
     ======================================== -->
 
-    <section class="conclusion">
+    <section class="conclusion container">
 
-        <h2>Also: Opa, gib den Schlüssel ab?</h2>
+        <h2>
+            Also: Opa, gib den Schlüssel ab?
+        </h2>
 
         <p>
             Die Daten liefern keine klare Altersgrenze, ab der Autofahren plötzlich zum
@@ -660,7 +704,7 @@
          Abschlussfrage
     ======================================== -->
 
-    <section class="age-question age-question--final">
+    <section class="age-question age-question--final container">
 
         <h2>
             Würden Sie Ihre Antwort nun noch einmal anpassen?
@@ -698,14 +742,17 @@
                         max="100"
                         value="75"
                         step="1"
+                        aria-label="Angepasstes Höchstalter für das Autofahren"
                 >
 
             </div>
 
 
             <div class="age-slider__labels">
+
                 <span>18</span>
                 <span>100</span>
+
             </div>
 
 
@@ -752,11 +799,13 @@
 
     </section>
 
-
 </main>
 
 
-<!-- Footer -->
+<!-- ========================================
+     Footer
+======================================== -->
+
 <footer>
 </footer>
 
