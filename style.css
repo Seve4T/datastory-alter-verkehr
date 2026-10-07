@@ -137,7 +137,13 @@ h1,
 h2,
 h3,
 p {
-    margin-top: 0;
+    max-width: 720px;
+    margin-bottom: 1.5rem;
+
+    color: var(--color-text);
+
+    font-size: var(--font-size-body);
+    line-height: 1.65;
 }
 
 h1,
@@ -156,9 +162,21 @@ h1 {
 }
 
 h2 {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+
+    color: var(--color-orange);
+
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.4;
+}
+
+.age-question h2 {
+    margin-top: 0;
     margin-bottom: var(--space-md);
 
-    font-size: var(--font-size-h2);
+    font-size: 3rem;
     line-height: 1.1;
 }
 
@@ -179,7 +197,7 @@ p {
 }
 
 strong {
-    color: var(--color-highlight);
+    color: var(--color-text);
     font-weight: var(--font-weight-bold);
 }
 
@@ -240,11 +258,11 @@ figcaption {
 ======================================== */
 
 section {
-    padding-block: var(--space-xl);
+    padding-block: var(--space-md);
 }
 
 .story-section {
-    padding-block: var(--space-2xl);
+    padding-block: var(--space-xl);
 }
 
 /* ========================================
@@ -430,14 +448,15 @@ section {
     letter-spacing: 0.08em;
 }
 
-
 /* ========================================
    10. Datengrundlage
 ======================================== */
 
 .data-notes {
     max-width: 850px;
-    margin-block: var(--space-lg);
+
+    margin-top: 0;
+    margin-bottom: var(--space-md);
 }
 
 .data-notes summary {
@@ -445,9 +464,24 @@ section {
 
     color: var(--color-orange);
 
+    font-size: var(--font-size-body);
     font-weight: var(--font-weight-bold);
+    line-height: 1.4;
 }
 
+.data-notes ul {
+    margin-top: var(--space-sm);
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+}
+
+.data-notes li {
+    margin-bottom: var(--space-sm);
+}
+
+.data-notes li:last-child {
+    margin-bottom: 0;
+}
 
 /* ========================================
    11. Diagramme
