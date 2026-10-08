@@ -443,11 +443,9 @@ async function createLicenceDevelopmentChart() {
                         /* 2016 bleibt statisch */
 
                         {
-                            label:
-                                '2016',
+                            label: '2016',
 
-                            data:
-                            values2016,
+                            data: values2016,
 
                             backgroundColor: context => {
 
@@ -458,22 +456,18 @@ async function createLicenceDevelopmentChart() {
                                 return 'rgba(101, 148, 219, 0.45)';
                             },
 
-                            borderRadius:
-                                6,
+                            borderRadius: 6,
 
-                            borderSkipped:
-                                false
+                            borderSkipped: false
                         },
 
 
                         /* 2025 wird scrollgesteuert */
 
                         {
-                            label:
-                                '2025',
+                            label: '2025',
 
-                            data:
-                            initialValues2025,
+                            data: initialValues2025,
 
                             backgroundColor: context => {
 
@@ -484,21 +478,19 @@ async function createLicenceDevelopmentChart() {
                                 return '#6594DB';
                             },
 
-                            borderRadius:
-                                6,
+                            borderRadius: 6,
 
-                            borderSkipped:
-                                false
+                            borderSkipped: false
                         }
                     ]
                 },
 
-                options: {
-                    responsive:
-                        true,
 
-                    maintainAspectRatio:
-                        false,
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
 
 
                     /*
@@ -507,71 +499,107 @@ async function createLicenceDevelopmentChart() {
                      * durch den Scrollfortschritt gesteuert.
                      */
 
-                    animation:
-                        false,
+                    animation: false,
 
+
+                    /* Legende und Tooltip */
 
                     plugins: {
+
                         legend: {
-                            display:
-                                true,
+                            display: true,
 
                             labels: {
-                                color:
-                                    '#FFFCFE'
+                                color: '#FFFCFE'
                             }
                         },
 
+
                         tooltip: {
+
                             callbacks: {
-                                label:
-                                    function (context) {
 
-                                        const value =
-                                            context.raw.toLocaleString(
-                                                'de-CH'
-                                            );
+                                label: function (context) {
 
-                                        return `${context.dataset.label}: ${value}`;
-                                    }
+                                    const value =
+                                        context.raw.toLocaleString(
+                                            'de-CH'
+                                        );
+
+                                    return `${context.dataset.label}: ${value}`;
+                                }
                             }
                         }
                     },
 
 
+                    /* ========================================
+                       Achsen
+                    ======================================== */
+
                     scales: {
+
+                        /* X-Achse */
+
                         x: {
+
                             grid: {
-                                display:
-                                    false
+                                display: false
                             },
 
                             ticks: {
-                                color:
-                                    '#FFFCFE'
+                                color: '#FFFCFE'
+                            },
+
+                            title: {
+                                display: true,
+                                text: 'Altersgruppe',
+                                color: '#FFFCFE',
+
+                                font: {
+                                    weight: 'bold'
+                                },
+
+                                padding: {
+                                    top: 12
+                                }
                             }
                         },
 
+
+                        /* Y-Achse */
+
                         y: {
-                            beginAtZero:
-                                true,
+
+                            beginAtZero: true,
 
                             grid: {
-                                color:
-                                    'rgba(255, 252, 254, 0.15)'
+                                color: 'rgba(255, 252, 254, 0.15)'
                             },
 
                             ticks: {
-                                color:
-                                    '#FFFCFE',
+                                color: '#FFFCFE',
 
-                                callback:
-                                    function (value) {
+                                callback: function (value) {
 
-                                        return value.toLocaleString(
-                                            'de-CH'
-                                        );
-                                    }
+                                    return value.toLocaleString(
+                                        'de-CH'
+                                    );
+                                }
+                            },
+
+                            title: {
+                                display: true,
+                                text: 'Anzahl Führerausweisinhaber:innen',
+                                color: '#FFFCFE',
+
+                                font: {
+                                    weight: 'bold'
+                                },
+
+                                padding: {
+                                    bottom: 12
+                                }
                             }
                         }
                     }
@@ -669,8 +697,8 @@ function initLicenceScrollAnimation(
 
             /*
              * Animation ist abgeschlossen,
-             * wenn die Grafik deutlich
-             * weiter nach oben gescrollt wurde.
+             * wenn die Grafik weiter
+             * nach oben gescrollt wurde.
              */
 
             const animationEnd =
@@ -729,8 +757,8 @@ function initLicenceScrollAnimation(
 
 
     /*
-     * Wie beim Hero bündeln wir
-     * Scroll-Events über requestAnimationFrame.
+     * Scroll-Events werden über
+     * requestAnimationFrame gebündelt.
      */
 
     let ticking =
@@ -788,6 +816,77 @@ const accidentRateCanvas =
     );
 
 let accidentRateChart;
+
+
+/*
+ * Dieses Plugin schneidet ausschliesslich
+ * die Datenlinie und ihre Punkte ab.
+ *
+ * Achsen, Raster und Beschriftungen bleiben
+ * während des Aufbaus vollständig sichtbar.
+ */
+
+const accidentRateRevealPlugin = {
+
+    id:
+        'accidentRateReveal',
+
+
+    beforeDatasetsDraw(chart) {
+
+        const progress =
+            Math.min(
+                Math.max(
+                    chart.$revealProgress ?? 0,
+                    0
+                ),
+                1
+            );
+
+
+        const {
+            ctx,
+            chartArea
+        } = chart;
+
+
+        if (!chartArea) {
+            return;
+        }
+
+
+        ctx.save();
+
+        ctx.beginPath();
+
+        ctx.rect(
+            chartArea.left,
+            chartArea.top,
+            chartArea.width * progress,
+            chartArea.height
+        );
+
+        ctx.clip();
+
+
+        chart.$revealClipActive =
+            true;
+    },
+
+
+    afterDatasetsDraw(chart) {
+
+        if (
+            chart.$revealClipActive
+        ) {
+
+            chart.ctx.restore();
+
+            chart.$revealClipActive =
+                false;
+        }
+    }
+};
 
 
 async function createAccidentRateChart() {
@@ -859,28 +958,23 @@ async function createAccidentRateChart() {
         });
 
 
-    const pointColors =
-        labels.map(ageGroup => {
-
-            if (
-                ageGroup === '60-69'
-                || ageGroup === '80-89'
-                || ageGroup === '90+'
-            ) {
-
-                return '#E38500';
-            }
-
-
-            return '#6594DB';
-        });
-
-
     accidentRateChart =
         new Chart(
             accidentRateCanvas,
             {
-                type: 'line',
+                type:
+                    'line',
+
+
+                /*
+                 * Scroll-Reveal nur für
+                 * dieses eine Diagramm.
+                 */
+
+                plugins: [
+                    accidentRateRevealPlugin
+                ],
+
 
                 data: {
                     labels:
@@ -894,6 +988,9 @@ async function createAccidentRateChart() {
                             data:
                             values,
 
+
+                            /* Linie normal blau */
+
                             borderColor:
                                 '#6594DB',
 
@@ -901,11 +998,23 @@ async function createAccidentRateChart() {
                                 '#6594DB',
 
 
+                            /* Punkte normal blau */
+
                             pointBackgroundColor:
-                            pointColors,
+                                '#6594DB',
 
                             pointBorderColor:
-                            pointColors,
+                                '#6594DB',
+
+
+                            /* Punkt beim Hover orange */
+
+                            pointHoverBackgroundColor:
+                                '#E38500',
+
+                            pointHoverBorderColor:
+                                '#E38500',
+
 
                             pointRadius:
                                 5,
@@ -916,20 +1025,39 @@ async function createAccidentRateChart() {
                             borderWidth:
                                 3,
 
+
+                            /*
+                             * Gerade Verbindung zwischen
+                             * den einzelnen Punkten.
+                             */
+
                             tension:
-                                0.25
+                                0
                         }
                     ]
                 },
 
+
                 options: {
+
                     responsive:
                         true,
 
                     maintainAspectRatio:
                         false,
 
+
+                    /*
+                     * Chart.js führt keine eigene
+                     * Animation aus.
+                     */
+
+                    animation:
+                        false,
+
+
                     plugins: {
+
                         legend: {
                             display:
                                 false
@@ -954,8 +1082,15 @@ async function createAccidentRateChart() {
                         }
                     },
 
+
                     scales: {
+
+                        /*
+                         * X-Achse
+                         */
+
                         x: {
+
                             grid: {
                                 display:
                                     false
@@ -964,10 +1099,37 @@ async function createAccidentRateChart() {
                             ticks: {
                                 color:
                                     '#FFFCFE'
+                            },
+
+                            title: {
+                                display:
+                                    true,
+
+                                text:
+                                    'Altersgruppe',
+
+                                color:
+                                    '#FFFCFE',
+
+                                font: {
+                                    weight:
+                                        'bold'
+                                },
+
+                                padding: {
+                                    top:
+                                        12
+                                }
                             }
                         },
 
+
+                        /*
+                         * Y-Achse
+                         */
+
                         y: {
+
                             beginAtZero:
                                 true,
 
@@ -989,13 +1151,327 @@ async function createAccidentRateChart() {
                                     "Beteiligte pro 100'000",
 
                                 color:
-                                    '#FFFCFE'
+                                    '#FFFCFE',
+
+                                font: {
+                                    weight:
+                                        'bold'
+                                },
+
+                                padding: {
+                                    bottom:
+                                        12
+                                }
                             }
                         }
                     }
                 }
             }
         );
+
+
+    /*
+     * Anfangszustand:
+     * Linie noch nicht sichtbar.
+     */
+
+    accidentRateChart.$revealProgress =
+        0;
+
+
+    accidentRateChart.update(
+        'none'
+    );
+
+
+    /*
+     * Scrollsteuerung starten.
+     */
+
+    initAccidentRateScrollReveal();
+}
+
+
+/*
+ * Scrollgesteuerter Aufbau der Linie.
+ *
+ * Die Linie beginnt bereits, während
+ * das Diagramm ins Sichtfeld scrollt.
+ *
+ * Beim Erreichen der Sticky-Position
+ * ist bereits ein grosser Teil aufgebaut.
+ *
+ * Sobald die Sticky-Phase endet,
+ * ist auch die Linie vollständig sichtbar.
+ */
+
+function initAccidentRateScrollReveal() {
+
+    const scrolly =
+        document.querySelector(
+            '.accident-rate-scrolly'
+        );
+
+
+    const accidentGraphic =
+        document.querySelector(
+            '.graphic--accident-rate'
+        );
+
+
+    /*
+     * Falls der Scroll-Aufbau im HTML
+     * nicht vorhanden ist, wird wenigstens
+     * das vollständige Diagramm angezeigt.
+     */
+
+    if (
+        !scrolly
+        || !accidentGraphic
+        || !accidentRateChart
+    ) {
+
+        if (
+            accidentRateChart
+        ) {
+
+            accidentRateChart.$revealProgress =
+                1;
+
+            accidentRateChart.update(
+                'none'
+            );
+        }
+
+        return;
+    }
+
+    /*
+     * Sticky-Position so berechnen,
+     * dass die Grafik vollständig sichtbar ist,
+     * sobald sie stehen bleibt.
+     */
+
+    const updateStickyPosition =
+        () => {
+
+            const bottomSpace =
+                32;
+
+
+            const stickyTop =
+                Math.max(
+                    32,
+                    window.innerHeight
+                    - accidentGraphic.offsetHeight
+                    - bottomSpace
+                );
+
+
+            accidentGraphic.style.setProperty(
+                '--accident-sticky-top',
+                `${stickyTop}px`
+            );
+        };
+
+
+    updateStickyPosition();
+
+    /*
+     * Wert zwischen 0 und 1 halten.
+     */
+
+    const clamp =
+        value => {
+
+            return Math.min(
+                Math.max(
+                    value,
+                    0
+                ),
+                1
+            );
+        };
+
+
+    /*
+     * Weicher Bewegungsverlauf.
+     */
+
+    const easeInOut =
+        progress => {
+
+            return (
+                progress
+                * progress
+                * (3 - 2 * progress)
+            );
+        };
+
+
+    const updateAccidentRateChart =
+        () => {
+
+            const scrollyRect =
+                scrolly.getBoundingClientRect();
+
+
+            /*
+             * Tatsächliche Sticky-Position
+             * direkt aus dem CSS lesen.
+             *
+             * Dadurch muss der Wert aus
+             * top: ... nicht nochmals in
+             * JavaScript definiert werden.
+             */
+
+            const stickyTop =
+                parseFloat(
+                    window
+                        .getComputedStyle(
+                            accidentGraphic
+                        )
+                        .top
+                ) || 0;
+
+
+            /*
+             * Position der Grafik innerhalb
+             * des Scrolly-Bereichs.
+             */
+
+            const graphicOffset =
+                accidentGraphic.offsetTop;
+
+
+            /*
+             * Aufbau startet schon dann,
+             * wenn die Oberkante der Grafik
+             * ungefähr 90 % der Bildschirmhöhe
+             * erreicht.
+             */
+
+            const revealStartTop =
+                window.innerHeight * 0.90
+                - graphicOffset;
+
+
+            /*
+             * Aufbau endet genau dann,
+             * wenn die Sticky-Grafik vom Ende
+             * ihres Scrolly-Bereichs wieder
+             * freigegeben wird.
+             *
+             * Dadurch gibt es nach der fertigen
+             * Linie keine zusätzliche Leerfahrt.
+             */
+
+            const revealEndTop =
+                stickyTop
+                + accidentGraphic.offsetHeight
+                - scrolly.offsetHeight;
+
+
+            const revealDistance =
+                revealStartTop
+                - revealEndTop;
+
+
+            /*
+             * Normalfall:
+             * Scrollfortschritt von 0 bis 1.
+             *
+             * Falls der Scrollbereich aus
+             * irgendeinem Grund zu klein wäre,
+             * wird das Diagramm vollständig gezeigt.
+             */
+
+            const rawProgress =
+                revealDistance > 0
+
+                    ? clamp(
+                        (
+                            revealStartTop
+                            - scrollyRect.top
+                        )
+                        /
+                        revealDistance
+                    )
+
+                    : 1;
+
+
+            const progress =
+                easeInOut(
+                    rawProgress
+                );
+
+
+            accidentRateChart.$revealProgress =
+                progress;
+
+
+            accidentRateChart.update(
+                'none'
+            );
+        };
+
+
+    /*
+     * Scroll-Events über
+     * requestAnimationFrame bündeln.
+     */
+
+    let ticking =
+        false;
+
+
+    const requestAccidentRateUpdate =
+        () => {
+
+            if (!ticking) {
+
+                window.requestAnimationFrame(
+                    () => {
+
+                        updateAccidentRateChart();
+
+                        ticking =
+                            false;
+                    }
+                );
+
+
+                ticking =
+                    true;
+            }
+        };
+
+
+    window.addEventListener(
+        'scroll',
+        requestAccidentRateUpdate,
+        { passive: true }
+    );
+
+
+    window.addEventListener(
+        'resize',
+        () => {
+
+            updateStickyPosition();
+
+            requestAccidentRateUpdate();
+        }
+    );
+
+
+    /*
+     * Anfangszustand anhand der
+     * aktuellen Scrollposition setzen.
+     */
+
+    updateAccidentRateChart();
 }
 
 
