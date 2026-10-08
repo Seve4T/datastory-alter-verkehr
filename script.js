@@ -278,37 +278,29 @@ async function createAbsoluteAccidentsChart() {
                     // X-Achse: Altersgruppen
                     x: {
                         grid: {
-                            display:
-                                false
+                            display: false
                         },
 
                         ticks: {
-                            color:
-                                '#FFFCFE'
+                            color: '#FFFCFE'
                         },
 
                         title: {
-                            display:
-                                true,
+                            display: true,
 
-                            text:
-                                'Altersgruppe',
+                            text: 'Altersgruppe',
 
-                            color:
-                                '#FFFCFE',
+                            color: '#FFFCFE',
 
                             font: {
-                                weight:
-                                    'bold'
+                                weight: 'bold'
                             },
 
                             padding: {
-                                top:
-                                    12
+                                top: 12
                             }
                         }
                     },
-
 
                     // Y-Achse: Anzahl Beteiligte
                     y: {
@@ -360,6 +352,7 @@ async function createAbsoluteAccidentsChart() {
     );
 }
 
+
 // ========================================
 // Gemeinsame Sticky-Scrollsteuerung
 // ========================================
@@ -377,8 +370,7 @@ function initStickyChartScroll(
         document.querySelector(graphicSelector);
 
 
-    /* Falls der Scrollbereich fehlt:
-       fertiges Diagramm anzeigen */
+    /* Ohne Grafik die vollständigen Werte anzeigen */
 
     if (!scrolly || !graphic) {
         renderProgress(1);
@@ -386,131 +378,309 @@ function initStickyChartScroll(
     }
 
 
-    /* Fortschritt bis zum Reload behalten */
+    /* Animationszustand bis zum Reload speichern */
 
-    let maxProgress = 0;
-    let lastRenderedProgress = -1;
-    let ticking = false;
-
-
-    const clamp = value => {
-        return Math.min(Math.max(value, 0), 1);
-    };
+    let progress = 0;
+    let finished = false;
+    let lastTouchY = null;
 
 
-    /* Weicher Verlauf wie bei den anderen Grafiken */
+    /* Führerausweisgrafik hält deutlich früher an.
+     Andere Diagramme bleiben unverändert. */
 
-    const easeInOut = progress => {
-        return progress * progress * (3 - 2 * progress);
-    };
+    const isReady = () => {
 
+        const rect =
+            graphic.getBoundingClientRect();
 
-    const updateChart = () => {
+        if (
+            scrollySelector === '.licence-development-scrolly'
+        ) {
 
-        /* Bildunterschrift bleibt 32 px
-           über dem unteren Bildschirmrand */
-
-        const stickyTop =
-            Math.max(
-                24,
-                window.innerHeight
-                - graphic.offsetHeight
-                - 32
+            return (
+                rect.top >= 0 &&
+                rect.bottom <= window.innerHeight + 100
             );
+        }
 
-        graphic.style.setProperty(
-            '--chart-sticky-top',
-            `${stickyTop}px`
+        return (
+            rect.top >= 0 &&
+            rect.bottom <= window.innerHeight - 32
         );
-
-
-        /* Verfügbare Strecke während der Sticky-Phase */
-
-        const scrollDistance =
-            scrolly.offsetHeight - graphic.offsetHeight;
-
-
-        /* Fortschritt aus dem äusseren
-           Scrollbereich berechnen */
-
-        const rawProgress =
-            scrollDistance > 0
-                ? clamp(
-                    (
-                        stickyTop
-                        - scrolly.getBoundingClientRect().top
-                    ) / scrollDistance
-                )
-                : 1;
-
-
-        /* Beim Zurückscrollen nicht zurückbauen */
-
-        maxProgress =
-            Math.max(
-                maxProgress,
-                easeInOut(rawProgress)
-            );
-
-
-        /* Diagramm nur bei einer Veränderung zeichnen */
-
-        if (maxProgress !== lastRenderedProgress) {
-
-            renderProgress(maxProgress);
-
-            lastRenderedProgress = maxProgress;
-        }
-
-
-        /* Fertig: keine Scrollberechnung mehr nötig */
-
-        if (maxProgress >= 1) {
-
-            window.removeEventListener(
-                'scroll',
-                requestUpdate
-            );
-        }
     };
 
 
-    /* Scrollereignisse effizient verarbeiten */
+    /* Gleiche weiche Bewegung wie bisher */
 
-    const requestUpdate = () => {
+    const easeInOut = value => {
 
-        if (ticking) {
+        return (
+            value * value * (3 - 2 * value)
+        );
+    };
+
+
+    /* ========================================
+       Scrollbewegung baut das Diagramm auf
+    ======================================== */
+
+    const advance = distance => {
+
+        if (finished || distance <= 0) {
             return;
         }
 
-        ticking = true;
 
-        window.requestAnimationFrame(() => {
+        /* Scrollstrecke in Fortschritt umrechnen */
 
-            ticking = false;
-            updateChart();
-        });
+        progress = Math.min(
+            1,
+            progress + distance / (window.innerHeight * 1.5)
+        );
+
+
+        /* Diagramm aktualisieren */
+
+        renderProgress(
+            easeInOut(progress)
+        );
+
+
+        /* Nach 100 % vollständig freigeben */
+
+        if (progress >= 1) {
+
+            finished = true;
+
+            scrolly.classList.add(
+                'is-complete'
+            );
+
+
+            /* Scrollsteuerung dauerhaft entfernen */
+
+            window.removeEventListener(
+                'wheel',
+                onWheel
+            );
+
+            window.removeEventListener(
+                'keydown',
+                onKeyDown
+            );
+
+            window.removeEventListener(
+                'touchstart',
+                onTouchStart
+            );
+
+            window.removeEventListener(
+                'touchmove',
+                onTouchMove
+            );
+
+            window.removeEventListener(
+                'touchend',
+                onTouchEnd
+            );
+
+            window.removeEventListener(
+                'touchcancel',
+                onTouchEnd
+            );
+        }
     };
 
 
+    /* ========================================
+       Maus und Trackpad
+    ======================================== */
+
+    function onWheel(event) {
+
+        if (
+            finished ||
+            event.defaultPrevented ||
+            event.ctrlKey ||
+            event.deltaY <= 0 ||
+            !isReady()
+        ) {
+            return;
+        }
+
+
+        /* Gesamte Seite kurz anhalten */
+
+        event.preventDefault();
+
+
+        /* Scrollbewegung des Geräts umrechnen */
+
+        const factor =
+            event.deltaMode === 1 ? 16 :
+                event.deltaMode === 2
+                    ? window.innerHeight
+                    : 1;
+
+
+        /* Statt der Seite das Diagramm bewegen */
+
+        advance(
+            event.deltaY * factor
+        );
+    }
+
+
+    /* ========================================
+       Tastatur
+    ======================================== */
+
+    function onKeyDown(event) {
+
+        if (
+            finished ||
+            event.defaultPrevented ||
+            event.altKey ||
+            event.ctrlKey ||
+            event.metaKey ||
+            !isReady() ||
+            event.target?.closest?.(
+                'input, textarea, select, button, [contenteditable="true"]'
+            )
+        ) {
+            return;
+        }
+
+
+        let distance = 0;
+
+
+        if (event.key === 'ArrowDown') {
+
+            distance = 50;
+
+        } else if (
+            event.key === 'PageDown' ||
+            (
+                event.key === ' ' &&
+                !event.shiftKey
+            )
+        ) {
+
+            distance =
+                window.innerHeight * 0.8;
+        }
+
+
+        if (distance > 0) {
+
+            event.preventDefault();
+
+            advance(distance);
+        }
+    }
+
+
+    /* ========================================
+       Touch-Steuerung
+    ======================================== */
+
+    function onTouchStart(event) {
+
+        lastTouchY =
+            event.touches.length === 1
+                ? event.touches[0].clientY
+                : null;
+    }
+
+
+    function onTouchMove(event) {
+
+        if (
+            lastTouchY === null ||
+            event.touches.length !== 1
+        ) {
+            return;
+        }
+
+
+        const currentY =
+            event.touches[0].clientY;
+
+        const distance =
+            lastTouchY - currentY;
+
+        lastTouchY = currentY;
+
+
+        if (
+            finished ||
+            event.defaultPrevented ||
+            distance <= 0 ||
+            !isReady()
+        ) {
+            return;
+        }
+
+
+        event.preventDefault();
+
+        advance(distance);
+    }
+
+
+    function onTouchEnd() {
+
+        lastTouchY = null;
+    }
+
+
+    /* ========================================
+       Scrollsteuerung aktivieren
+    ======================================== */
+
     window.addEventListener(
-        'scroll',
-        requestUpdate,
+        'wheel',
+        onWheel,
+        { passive: false }
+    );
+
+
+    window.addEventListener(
+        'keydown',
+        onKeyDown
+    );
+
+
+    window.addEventListener(
+        'touchstart',
+        onTouchStart,
         { passive: true }
     );
 
 
-    /* Sticky-Position bei Fenstergrösse anpassen */
-
     window.addEventListener(
-        'resize',
-        requestUpdate
+        'touchmove',
+        onTouchMove,
+        { passive: false }
     );
 
 
-    /* Anfangszustand setzen */
+    window.addEventListener(
+        'touchend',
+        onTouchEnd
+    );
 
-    updateChart();
+
+    window.addEventListener(
+        'touchcancel',
+        onTouchEnd
+    );
+
+
+    /* Nach dem Reload beginnt die Grafik bei 0 */
+
+    renderProgress(0);
 }
 
 // ========================================
@@ -1082,40 +1252,31 @@ async function createAccidentRateChart() {
 
                     scales: {
 
-                        /*
-                         * X-Achse
-                         */
-
+                        // X-Achse: zusätzlicher Abstand für die Randpunkte
                         x: {
+                            offset: true,
 
                             grid: {
-                                display:
-                                    false
+                                display: false
                             },
 
                             ticks: {
-                                color:
-                                    '#FFFCFE'
+                                color: '#FFFCFE'
                             },
 
                             title: {
-                                display:
-                                    true,
+                                display: true,
 
-                                text:
-                                    'Altersgruppe',
+                                text: 'Altersgruppe',
 
-                                color:
-                                    '#FFFCFE',
+                                color: '#FFFCFE',
 
                                 font: {
-                                    weight:
-                                        'bold'
+                                    weight: 'bold'
                                 },
 
                                 padding: {
-                                    top:
-                                        12
+                                    top: 12
                                 }
                             }
                         },
@@ -1202,279 +1363,42 @@ async function createAccidentRateChart() {
  * ist auch die Linie vollständig sichtbar.
  */
 
+
+/* ========================================
+   Relative Unfallbeteiligung:
+   Bildschirm während des Aufbaus anhalten
+======================================== */
+
 function initAccidentRateScrollReveal() {
 
-    const scrolly =
-        document.querySelector(
-            '.accident-rate-scrolly'
-        );
-
-
-    const accidentGraphic =
-        document.querySelector(
-            '.graphic--accident-rate'
-        );
-
-
-    /*
-     * Falls der Scroll-Aufbau im HTML
-     * nicht vorhanden ist, wird wenigstens
-     * das vollständige Diagramm angezeigt.
-     */
-
-    if (
-        !scrolly
-        || !accidentGraphic
-        || !accidentRateChart
-    ) {
-
-        if (
-            accidentRateChart
-        ) {
-
-            accidentRateChart.$revealProgress =
-                1;
-
-            accidentRateChart.update(
-                'none'
-            );
-        }
-
+    if (!accidentRateChart) {
         return;
     }
 
-    /*
-     * Sticky-Position so berechnen,
-     * dass die Grafik vollständig sichtbar ist,
-     * sobald sie stehen bleibt.
-     */
 
-    const updateStickyPosition =
-        () => {
+    /* Dieselbe Scrollsteuerung verwenden
+       wie bei Führerausweisen und Unfallschwere */
 
-            const bottomSpace =
-                32;
+    initStickyChartScroll(
+        '.accident-rate-scrolly',
+        '.graphic--accident-rate',
 
-
-            const stickyTop =
-                Math.max(
-                    32,
-                    window.innerHeight
-                    - accidentGraphic.offsetHeight
-                    - bottomSpace
-                );
-
-
-            accidentGraphic.style.setProperty(
-                '--accident-sticky-top',
-                `${stickyTop}px`
-            );
-        };
-
-
-    updateStickyPosition();
-
-    /*
-     * Wert zwischen 0 und 1 halten.
-     */
-
-    const clamp =
-        value => {
-
-            return Math.min(
-                Math.max(
-                    value,
-                    0
-                ),
-                1
-            );
-        };
-
-
-    /*
-     * Weicher Bewegungsverlauf.
-     */
-
-    const easeInOut =
         progress => {
 
-            return (
-                progress
-                * progress
-                * (3 - 2 * progress)
-            );
-        };
-
-    /* Höchsten Scrollfortschritt speichern */
-    let maxProgress = 0;
-
-    const updateAccidentRateChart =
-        () => {
-
-            const scrollyRect =
-                scrolly.getBoundingClientRect();
-
-
-            /*
-             * Tatsächliche Sticky-Position
-             * direkt aus dem CSS lesen.
-             *
-             * Dadurch muss der Wert aus
-             * top: ... nicht nochmals in
-             * JavaScript definiert werden.
-             */
-
-            const stickyTop =
-                parseFloat(
-                    window
-                        .getComputedStyle(
-                            accidentGraphic
-                        )
-                        .top
-                ) || 0;
-
-
-            /*
-             * Position der Grafik innerhalb
-             * des Scrolly-Bereichs.
-             */
-
-            const graphicOffset =
-                accidentGraphic.offsetTop;
-
-
-            /*
-             * Aufbau startet schon dann,
-             * wenn die Oberkante der Grafik
-             * ungefähr 90 % der Bildschirmhöhe
-             * erreicht.
-             */
-
-            const revealStartTop =
-                window.innerHeight * 0.90
-                - graphicOffset;
-
-
-            /*
-             * Aufbau endet genau dann,
-             * wenn die Sticky-Grafik vom Ende
-             * ihres Scrolly-Bereichs wieder
-             * freigegeben wird.
-             *
-             * Dadurch gibt es nach der fertigen
-             * Linie keine zusätzliche Leerfahrt.
-             */
-
-            const revealEndTop =
-                stickyTop
-                + accidentGraphic.offsetHeight
-                - scrolly.offsetHeight;
-
-
-            const revealDistance =
-                revealStartTop
-                - revealEndTop;
-
-
-            /*
-             * Normalfall:
-             * Scrollfortschritt von 0 bis 1.
-             *
-             * Falls der Scrollbereich aus
-             * irgendeinem Grund zu klein wäre,
-             * wird das Diagramm vollständig gezeigt.
-             */
-
-            const rawProgress =
-                revealDistance > 0
-
-                    ? clamp(
-                        (
-                            revealStartTop
-                            - scrollyRect.top
-                        )
-                        /
-                        revealDistance
-                    )
-
-                    : 1;
-
-
-            /* Beim Zurückscrollen Fortschritt behalten */
-            const progress =
-                Math.max(
-                    maxProgress,
-                    easeInOut(rawProgress)
-                );
-
-            maxProgress = progress;
-
+            /* Nur die Datenlinie wird
+               nach und nach sichtbar.
+               Achsen und Beschriftungen
+               bleiben vollständig sichtbar. */
 
             accidentRateChart.$revealProgress =
                 progress;
 
 
-            accidentRateChart.update(
-                'none'
-            );
-        };
+            /* Ohne zusätzliche Chart.js-Animation */
 
-
-    /*
-     * Scroll-Events über
-     * requestAnimationFrame bündeln.
-     */
-
-    let ticking =
-        false;
-
-
-    const requestAccidentRateUpdate =
-        () => {
-
-            if (!ticking) {
-
-                window.requestAnimationFrame(
-                    () => {
-
-                        updateAccidentRateChart();
-
-                        ticking =
-                            false;
-                    }
-                );
-
-
-                ticking =
-                    true;
-            }
-        };
-
-
-    window.addEventListener(
-        'scroll',
-        requestAccidentRateUpdate,
-        { passive: true }
-    );
-
-
-    window.addEventListener(
-        'resize',
-        () => {
-
-            updateStickyPosition();
-
-            requestAccidentRateUpdate();
+            accidentRateChart.update('none');
         }
     );
-
-
-    /*
-     * Anfangszustand anhand der
-     * aktuellen Scrollposition setzen.
-     */
-
-    updateAccidentRateChart();
 }
 
 
@@ -1750,46 +1674,77 @@ async function createSeverityChart() {
                         }
                     },
 
+                    /* ========================================
+   Achsenbeschriftung Unfallschwere
+======================================== */
+
                     scales: {
+
+                        /* X-Achse: Prozentanteil */
+
                         x: {
-                            stacked:
-                                true,
+                            stacked: true,
 
-                            min:
-                                0,
-
-                            max:
-                                100,
+                            min: 0,
+                            max: 100,
 
                             grid: {
-                                color:
-                                    'rgba(255, 252, 254, 0.15)'
+                                color: 'rgba(255, 252, 254, 0.15)'
                             },
 
                             ticks: {
-                                color:
-                                    '#FFFCFE',
+                                color: '#FFFCFE',
 
-                                callback:
-                                    function (value) {
+                                callback: function (value) {
+                                    return `${value} %`;
+                                }
+                            },
 
-                                        return `${value} %`;
-                                    }
+                            title: {
+                                display: true,
+
+                                text: 'Anteil der Unfallbeteiligungen (%)',
+
+                                color: '#FFFCFE',
+
+                                font: {
+                                    weight: 'bold'
+                                },
+
+                                padding: {
+                                    top: 12
+                                }
                             }
                         },
 
+
+                        /* Y-Achse: Altersgruppen */
+
                         y: {
-                            stacked:
-                                true,
+                            stacked: true,
 
                             grid: {
-                                display:
-                                    false
+                                display: false
                             },
 
                             ticks: {
-                                color:
-                                    '#FFFCFE'
+                                color: '#FFFCFE'
+                            },
+
+                            title: {
+                                display: true,
+
+                                text: 'Altersgruppe',
+
+                                color: '#FFFCFE',
+
+                                font: {
+                                    weight: 'bold'
+                                },
+
+                                padding: {
+                                    bottom: 12
+                                }
                             }
                         }
                     }
@@ -1852,111 +1807,52 @@ function observeSeverityChart(
     );
 }
 
+
 // ========================================
 // Abschlussdiagramm mit aktuellem Alter
 // ========================================
 
 const finalAgeChartCanvas =
-    document.querySelector(
-        '#finalAgeChart'
-    );
+    document.querySelector('#finalAgeChart');
 
 const finalAgeChartNote =
-    document.querySelector(
-        '#finalAgeChartNote'
-    );
+    document.querySelector('#finalAgeChartNote');
 
 let finalAgeChart;
 
 
-// Wert auf der Kurve berechnen
+// Gewähltes Alter einer vorhandenen Altersklasse zuordnen
 
-function getFinalAgeRate(
-    age,
-    curveData
-) {
+function getFinalAgeGroupIndex(age) {
 
-    const firstPoint =
-        curveData[0];
-
-    const lastPoint =
-        curveData[
-        curveData.length - 1
-            ];
-
-
-    if (
-        age <= firstPoint.x
-    ) {
-
-        return firstPoint.y;
+    if (age < 20) {
+        return -1;
     }
 
-
-    if (
-        age >= lastPoint.x
-    ) {
-
-        return lastPoint.y;
+    if (age >= 90) {
+        return 7;
     }
 
-
-    for (
-        let i = 0;
-        i < curveData.length - 1;
-        i++
-    ) {
-
-        const current =
-            curveData[i];
-
-        const next =
-            curveData[i + 1];
-
-
-        if (
-            age >= current.x
-            && age <= next.x
-        ) {
-
-            const position =
-                (age - current.x)
-                / (next.x - current.x);
-
-
-            return (
-                current.y
-                + (
-                    next.y
-                    - current.y
-                )
-                * position
-            );
-        }
-    }
-
-
-    return firstPoint.y;
+    return Math.floor((age - 20) / 10);
 }
 
 
+// ========================================
 // Abschlussdiagramm erstellen
+// ========================================
 
 async function createFinalAgeChart() {
 
     const trafficData =
         await loadTrafficData();
 
+    const data2025 = trafficData.filter(row =>
+        Number(row.year) === 2025
+    );
 
-    const data2025 =
-        trafficData.filter(
-            row => {
-                return Number(
-                    row.year
-                ) === 2025;
-            }
-        );
 
+    /* Dieselben Altersklassen wie im
+       grossen Liniendiagramm */
 
     const ageGroupOrder = [
         '20-29',
@@ -1970,337 +1866,302 @@ async function createFinalAgeChart() {
     ];
 
 
-    const agePoints = [
-        25,
-        35,
-        45,
-        55,
-        65,
-        75,
-        85,
-        95
-    ];
+    /* Pro Altersklasse genau ein Datenpunkt */
+
+    const values = ageGroupOrder.map(ageGroup => {
+
+        const row = data2025.find(row =>
+            row.age_group === ageGroup
+        );
+
+        if (!row || Number(row.license_holders) <= 0) {
+            return null;
+        }
+
+        return (
+            Number(row.causally_involved)
+            / Number(row.license_holders)
+            * 100000
+        );
+    });
 
 
-    const sortedData =
-        ageGroupOrder
-            .map(ageGroup => {
+    /* ========================================
+       Chart.js-Diagramm
+    ======================================== */
 
-                return data2025.find(
-                    row => {
-                        return row.age_group ===
-                            ageGroup;
+    finalAgeChart = new Chart(
+        finalAgeChartCanvas,
+        {
+            type: 'line',
+
+            data: {
+                labels: ageGroupOrder,
+
+                datasets: [
+
+                    /* Blaue Linie:
+                       Relative Unfallbeteiligung 2025 */
+
+                    {
+                        label: 'Unfallbeteiligung 2025',
+
+                        data: values,
+
+                        borderColor: '#8AB8F5',
+                        backgroundColor: '#8AB8F5',
+
+                        pointBackgroundColor: '#8AB8F5',
+                        pointBorderColor: '#8AB8F5',
+
+                        pointHoverBackgroundColor: '#E38500',
+                        pointHoverBorderColor: '#E38500',
+
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+
+                        borderWidth: 3,
+
+                        /* Gerade Linien zwischen den Punkten */
+
+                        tension: 0
+                    },
+
+
+                    /* Orangefarbener Auswahlpunkt */
+
+                    {
+                        label: 'Ihre Auswahl',
+
+                        /* Zu Beginn wird der gewählte
+                           Punkt weiter unten eingesetzt */
+
+                        data: ageGroupOrder.map(() => null),
+
+                        /* Keine Verbindungslinie */
+
+                        showLine: false,
+
+                        backgroundColor: '#E38500',
+                        borderColor: '#E38500',
+
+                        pointBackgroundColor: '#E38500',
+                        pointBorderColor: '#FFFCFE',
+
+                        pointHoverBackgroundColor: '#E38500',
+                        pointHoverBorderColor: '#FFFCFE',
+
+                        pointRadius: 10,
+                        pointHoverRadius: 12,
+                        pointBorderWidth: 3
                     }
-                );
-
-            })
-            .filter(row => {
-                return row !== undefined;
-            });
+                ]
+            },
 
 
-    const curveData =
-        sortedData.map(
-            (row, index) => {
+            /* ========================================
+               Diagrammeinstellungen
+            ======================================== */
 
-                const causallyInvolved =
-                    Number(
-                        row.causally_involved
-                    );
+            options: {
 
-                const licenseHolders =
-                    Number(
-                        row.license_holders
-                    );
+                responsive: true,
 
+                maintainAspectRatio: false,
 
-                const rate =
-                    causallyInvolved
-                    / licenseHolders
-                    * 100000;
+                /* Orangefarbener Punkt springt
+                   ohne Übergangsanimation */
+
+                animation: false,
 
 
-                return {
-                    x:
-                        agePoints[index],
+                plugins: {
 
-                    y:
-                    rate
-                };
-            }
-        );
+                    legend: {
+                        display: false
+                    },
 
+                    tooltip: {
 
-    const selectedAge =
-        Number(
-            finalAgeRange.value
-        );
+                        callbacks: {
 
+                            label: function (context) {
 
-    const selectedRate =
-        getFinalAgeRate(
-            selectedAge,
-            curveData
-        );
+                                const value =
+                                    Number(context.parsed.y)
+                                        .toFixed(1)
+                                        .replace('.', ',');
 
+                                if (
+                                    context.dataset.label ===
+                                    'Ihre Auswahl'
+                                ) {
 
-    finalAgeChart =
-        new Chart(
-            finalAgeChartCanvas,
-            {
-                data: {
-                    datasets: [
-
-                        {
-                            type:
-                                'line',
-
-                            label:
-                                'Unfallbeteiligung 2025',
-
-                            data:
-                            curveData,
-
-                            parsing:
-                                false,
-
-                            borderColor:
-                                '#8AB8F5' ,
-
-                            backgroundColor:
-                                '#8AB8F5',
-
-                            pointBackgroundColor:
-                                '#8AB8F5',
-
-                            pointBorderColor:
-                                '#8AB8F5',
-
-                            pointRadius:
-                                5,
-
-                            pointHoverRadius:
-                                7,
-
-                            borderWidth:
-                                3,
-
-                            tension:
-                                0.25
-                        },
-
-
-                        {
-                            type:
-                                'scatter',
-
-                            label:
-                                'Ihre Auswahl',
-
-                            data: [
-                                {
-                                    x:
-                                    selectedAge,
-
-                                    y:
-                                    selectedRate
+                                    return `Ihre Auswahl (${context.label}): ${value} pro 100'000`;
                                 }
-                            ],
 
-                            parsing:
-                                false,
-
-                            backgroundColor:
-                                '#E38500',
-
-                            borderColor:
-                                '#FFFCFE',
-
-                            pointRadius:
-                                10,
-
-                            pointHoverRadius:
-                                12,
-
-                            pointBorderWidth:
-                                3
+                                return `${value} pro 100'000`;
+                            }
                         }
-                    ]
+                    }
                 },
 
-                options: {
-                    responsive:
-                        true,
 
-                    maintainAspectRatio:
-                        false,
+                /* ========================================
+                   Achsen wie im grossen Liniendiagramm
+                ======================================== */
 
-                    plugins: {
-                        legend: {
-                            display:
-                                false
+                scales: {
+
+                    /* X-Achse: Altersgruppen */
+
+                    x: {
+
+                        /* Randpunkte vollständig sichtbar */
+
+                        offset: true,
+
+                        grid: {
+                            display: false
                         },
 
-                        tooltip: {
-                            callbacks: {
-                                label:
-                                    function (context) {
+                        ticks: {
+                            color: '#FFFCFE'
+                        },
 
-                                        const value =
-                                            context.raw.y
-                                                .toFixed(1)
-                                                .replace(
-                                                    '.',
-                                                    ','
-                                                );
+                        title: {
 
+                            display: true,
 
-                                        if (
-                                            context.dataset.label ===
-                                            'Ihre Auswahl'
-                                        ) {
+                            text: 'Altersgruppe',
 
-                                            return `${context.raw.x} Jahre: ca. ${value} pro 100'000`;
-                                        }
+                            color: '#FFFCFE',
 
+                            font: {
+                                weight: 'bold'
+                            },
 
-                                        return `${value} pro 100'000`;
-                                    }
+                            padding: {
+                                top: 12
                             }
                         }
                     },
 
-                    scales: {
-                        x: {
-                            type:
-                                'linear',
 
-                            min:
-                                18,
+                    /* Y-Achse: Relative Unfallbeteiligung */
 
-                            max:
-                                100,
+                    y: {
 
-                            grid: {
-                                display:
-                                    false
-                            },
+                        beginAtZero: true,
 
-                            ticks: {
-                                color:
-                                    '#FFFCFE',
-
-                                stepSize:
-                                    10
-                            },
-
-                            title: {
-                                display:
-                                    true,
-
-                                text:
-                                    'Alter',
-
-                                color:
-                                    '#FFFCFE'
-                            }
+                        grid: {
+                            color: 'rgba(255, 252, 254, 0.15)'
                         },
 
-                        y: {
-                            beginAtZero:
-                                true,
+                        ticks: {
+                            color: '#FFFCFE'
+                        },
 
-                            grid: {
-                                color:
-                                    'rgba(255, 252, 254, 0.15)'
+                        title: {
+
+                            display: true,
+
+                            text: "Beteiligte pro 100'000",
+
+                            color: '#FFFCFE',
+
+                            font: {
+                                weight: 'bold'
                             },
 
-                            ticks: {
-                                color:
-                                    '#FFFCFE'
-                            },
-
-                            title: {
-                                display:
-                                    true,
-
-                                text:
-                                    "Beteiligte pro 100'000",
-
-                                color:
-                                    '#FFFCFE'
+                            padding: {
+                                bottom: 12
                             }
                         }
                     }
                 }
             }
-        );
+        }
+    );
 
+
+    /* Gespeichertes Alter aus der
+       ersten Altersfrage übernehmen */
 
     updateFinalAgeChart(
-        selectedAge
+        Number(finalAgeRange.value)
     );
 }
 
 
-// Abschlussdiagramm aktualisieren
+// ========================================
+// Orangefarbenen Punkt aktualisieren
+// ========================================
 
-function updateFinalAgeChart(
-    age
-) {
+function updateFinalAgeChart(age) {
+
+    if (!finalAgeChart) {
+        return;
+    }
+
+
+    /* Passende Altersgruppe ermitteln */
+
+    const groupIndex =
+        getFinalAgeGroupIndex(age);
+
+    const labels =
+        finalAgeChart.data.labels;
+
+    const values =
+        finalAgeChart.data.datasets[0].data;
+
+
+    /* Der orange Punkt wird nur auf
+       der gewählten Altersgruppe angezeigt */
+
+    finalAgeChart.data.datasets[1].data =
+        values.map((value, index) => {
+
+            return index === groupIndex
+                ? value
+                : null;
+        });
+
+
+    /* Sofort springen, ohne Animation */
+
+    finalAgeChart.update('none');
+
+
+    /* Unter 20 Jahren gibt es keine
+       vergleichbaren Altersgruppen */
 
     if (
-        !finalAgeChart
+        groupIndex === -1
+        || values[groupIndex] == null
     ) {
+
+        finalAgeChartNote.textContent =
+            `${age} Jahre – für diese Altersgruppe liegen keine vergleichbaren Daten vor.`;
 
         return;
     }
 
 
-    const curveData =
-        finalAgeChart
-            .data
-            .datasets[0]
-            .data;
-
+    /* Zahl für den Erklärungstext */
 
     const rate =
-        getFinalAgeRate(
-            age,
-            curveData
-        );
-
-
-    finalAgeChart
-        .data
-        .datasets[1]
-        .data = [
-        {
-            x:
-            age,
-
-            y:
-            rate
-        }
-    ];
-
-
-    finalAgeChart.update();
-
-
-    const formattedRate =
-        rate
+        Number(values[groupIndex])
             .toFixed(1)
-            .replace(
-                '.',
-                ','
-            );
+            .replace('.', ',');
 
+
+    /* Angezeigte Altersgruppe erklären */
 
     finalAgeChartNote.textContent =
-        `${age} Jahre – ungefähr ${formattedRate} ursächlich Beteiligte pro 100'000 Führerausweisinhaber:innen.`;
+        `${age} Jahre – Altersgruppe ${labels[groupIndex]}: ungefähr ${rate} ursächlich Beteiligte pro 100'000 Führerausweisinhaber:innen.`;
 }
-
 
 // ========================================
 // Alle Grafiken starten

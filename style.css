@@ -540,6 +540,15 @@ section {
 }
 
 
+/* ========================================
+   Abstand nach der Führerausweisgrafik
+======================================== */
+
+.relative-accidents {
+    padding-top: var(--space-lg);
+}
+
+
 /* Text der relativen Unfallbeteiligung
    über die gesamte Inhaltsbreite */
 
@@ -557,18 +566,44 @@ section {
 
     width: 100%;
     max-width: none;
-    height: 160vh;
+    height: auto;
 }
 
 
-/* Liniengrafik bleibt stehen,
-   sobald sie vollständig im Viewport sichtbar ist */
+/* Text, Grafik und Bildunterschrift
+   passen gemeinsam ins Sichtfeld */
 
 .graphic.graphic--accident-rate {
-    position: sticky;
-    top: var(--accident-sticky-top, 8vh);
+    position: static;
 
-    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: min(calc(100vh - 220px), 760px);
+    min-height: 400px;
+
+    margin: 0;
+}
+
+
+/* Diagrammhöhe passt sich dem verfügbaren Platz an */
+
+.graphic.graphic--accident-rate .chart-container {
+    flex: 1 1 auto;
+
+    min-height: 0;
+    height: auto;
+
+    margin: var(--space-sm) 0;
+}
+
+
+/* Text und Beschriftung nicht zusammendrücken */
+
+.graphic.graphic--accident-rate .accident-rate__sticky-text,
+.graphic.graphic--accident-rate figcaption {
+    flex-shrink: 0;
 }
 
 /* Text oberhalb des Liniendiagramms */
@@ -586,33 +621,37 @@ section {
     max-width: none;
 }
 
+
 /* ========================================
    Sticky-Scroll für animierte Diagramme
 ======================================== */
 
-/* Zusätzliche Scrollstrecke für den Diagrammaufbau */
+/* Die gesamte Seite bleibt während der
+   Animation durch JavaScript stehen.
+   Zusätzliche Scrollhöhe ist nicht nötig. */
 
 .chart-scrolly {
     position: relative;
 
     width: 100%;
-    height: 160vh;
+    height: auto;
 }
 
 
-/* Diagramm und Beschriftung bleiben gemeinsam stehen */
+/* Grafik und Bildunterschrift bleiben
+   gemeinsam im normalen Seitenlayout */
 
 .chart-scrolly > .graphic {
     display: flow-root;
-    position: sticky;
 
-    top: var(--chart-sticky-top, 32px);
+    position: static;
 
     margin: 0;
 }
 
 
-/* Abstand zwischen Diagramm und Bildunterschrift */
+/* Abstand zwischen Diagramm
+   und Bildunterschrift */
 
 .chart-scrolly .chart-container {
     margin: var(--space-md) 0 var(--space-sm);
@@ -622,14 +661,29 @@ section {
 /* Führerausweisgrafik */
 
 .licence-development-scrolly .chart-container {
-    height: clamp(260px, calc(100vh - 160px), 560px);
+    height: clamp(
+            260px,
+            calc(100vh - 160px),
+            560px
+    );
 }
 
 
 /* Unfallschwere */
 
 .severity-scrolly .chart-container {
-    height: clamp(260px, calc(100vh - 160px), 520px);
+    height: clamp(
+            260px,
+            calc(100vh - 160px),
+            520px
+    );
+}
+
+
+/* Abstand nach der Unfallschwere-Grafik */
+
+.severity-scrolly {
+    margin-bottom: var(--space-lg);
 }
 
 /* ========================================
@@ -717,6 +771,24 @@ section {
 }
 
 .data-notes li:last-child {
+    margin-bottom: 0;
+}
+
+/* ========================================
+   Impressum im Footer
+======================================== */
+
+/* Abstand zum Artikel und Seitenende */
+
+.site-footer {
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-lg);
+}
+
+
+/* Bestehendes Dropdown-Design übernehmen */
+
+.site-footer .data-notes {
     margin-bottom: 0;
 }
 
@@ -936,12 +1008,14 @@ section {
     height: 420px;
 }
 
+/* Infotext unter dem Abschlussdiagramm */
+
 .final-age-chart__note {
     max-width: 750px;
 
     margin-top: var(--space-sm);
 
-    color: var(--color-blue);
+    color: var(--color-white);
 
     font-size: var(--font-size-small);
     line-height: 1.5;
