@@ -234,7 +234,7 @@ async function createAbsoluteAccidentsChart() {
 
                         // Alle Balken einheitlich hellblau
                         backgroundColor:
-                            '#6594DB',
+                            '#8AB8F5',
 
                         // Hover-Farbe
                         hoverBackgroundColor:
@@ -360,6 +360,158 @@ async function createAbsoluteAccidentsChart() {
     );
 }
 
+// ========================================
+// Gemeinsame Sticky-Scrollsteuerung
+// ========================================
+
+function initStickyChartScroll(
+    scrollySelector,
+    graphicSelector,
+    renderProgress
+) {
+
+    const scrolly =
+        document.querySelector(scrollySelector);
+
+    const graphic =
+        document.querySelector(graphicSelector);
+
+
+    /* Falls der Scrollbereich fehlt:
+       fertiges Diagramm anzeigen */
+
+    if (!scrolly || !graphic) {
+        renderProgress(1);
+        return;
+    }
+
+
+    /* Fortschritt bis zum Reload behalten */
+
+    let maxProgress = 0;
+    let lastRenderedProgress = -1;
+    let ticking = false;
+
+
+    const clamp = value => {
+        return Math.min(Math.max(value, 0), 1);
+    };
+
+
+    /* Weicher Verlauf wie bei den anderen Grafiken */
+
+    const easeInOut = progress => {
+        return progress * progress * (3 - 2 * progress);
+    };
+
+
+    const updateChart = () => {
+
+        /* Bildunterschrift bleibt 32 px
+           über dem unteren Bildschirmrand */
+
+        const stickyTop =
+            Math.max(
+                24,
+                window.innerHeight
+                - graphic.offsetHeight
+                - 32
+            );
+
+        graphic.style.setProperty(
+            '--chart-sticky-top',
+            `${stickyTop}px`
+        );
+
+
+        /* Verfügbare Strecke während der Sticky-Phase */
+
+        const scrollDistance =
+            scrolly.offsetHeight - graphic.offsetHeight;
+
+
+        /* Fortschritt aus dem äusseren
+           Scrollbereich berechnen */
+
+        const rawProgress =
+            scrollDistance > 0
+                ? clamp(
+                    (
+                        stickyTop
+                        - scrolly.getBoundingClientRect().top
+                    ) / scrollDistance
+                )
+                : 1;
+
+
+        /* Beim Zurückscrollen nicht zurückbauen */
+
+        maxProgress =
+            Math.max(
+                maxProgress,
+                easeInOut(rawProgress)
+            );
+
+
+        /* Diagramm nur bei einer Veränderung zeichnen */
+
+        if (maxProgress !== lastRenderedProgress) {
+
+            renderProgress(maxProgress);
+
+            lastRenderedProgress = maxProgress;
+        }
+
+
+        /* Fertig: keine Scrollberechnung mehr nötig */
+
+        if (maxProgress >= 1) {
+
+            window.removeEventListener(
+                'scroll',
+                requestUpdate
+            );
+        }
+    };
+
+
+    /* Scrollereignisse effizient verarbeiten */
+
+    const requestUpdate = () => {
+
+        if (ticking) {
+            return;
+        }
+
+        ticking = true;
+
+        window.requestAnimationFrame(() => {
+
+            ticking = false;
+            updateChart();
+        });
+    };
+
+
+    window.addEventListener(
+        'scroll',
+        requestUpdate,
+        { passive: true }
+    );
+
+
+    /* Sticky-Position bei Fenstergrösse anpassen */
+
+    window.addEventListener(
+        'resize',
+        requestUpdate
+    );
+
+
+    /* Anfangszustand setzen */
+
+    updateChart();
+}
 
 // ========================================
 // Führerausweisentwicklung 2016 / 2025
@@ -453,7 +605,7 @@ async function createLicenceDevelopmentChart() {
                                     return '#E38500';
                                 }
 
-                                return 'rgba(101, 148, 219, 0.45)';
+                                return 'rgba(138, 184, 245, 0.45)';
                             },
 
                             borderRadius: 6,
@@ -475,7 +627,7 @@ async function createLicenceDevelopmentChart() {
                                     return '#E38500';
                                 }
 
-                                return '#6594DB';
+                                return '#8AB8F5';
                             },
 
                             borderRadius: 6,
@@ -626,186 +778,31 @@ async function createLicenceDevelopmentChart() {
  * wie weit die Grafik ins Sichtfeld scrollt.
  */
 
-function initLicenceScrollAnimation(
-    values2025
-) {
+// ========================================
+// Führerausweisentwicklung: Sticky-Scroll
+// ========================================
 
-    const licenceGraphic =
-        document.querySelector(
-            '.graphic--licence-development'
-        );
+function initLicenceScrollAnimation(values2025) {
 
-
-    if (
-        !licenceGraphic
-        || !licenceDevelopmentChart
-    ) {
+    if (!licenceDevelopmentChart) {
         return;
     }
 
+    initStickyChartScroll(
+        '.licence-development-scrolly',
+        '.graphic--licence-development',
 
-    /*
-     * Begrenzung eines Wertes
-     * auf den Bereich 0 bis 1.
-     */
-
-    const clamp = value => {
-
-        return Math.min(
-            Math.max(
-                value,
-                0
-            ),
-            1
-        );
-    };
-
-
-    /*
-     * Weicher Bewegungsverlauf,
-     * ähnlich wie beim Hero.
-     */
-
-    const easeInOut =
         progress => {
 
-            return (
-                progress
-                * progress
-                * (3 - 2 * progress)
-            );
-        };
+            /* 2016 bleibt sichtbar, 2025 wächst dazu */
 
+            licenceDevelopmentChart.data.datasets[1].data =
+                values2025.map(value => value * progress);
 
-    const updateLicenceChart =
-        () => {
-
-            const rect =
-                licenceGraphic
-                    .getBoundingClientRect();
-
-
-            /*
-             * Animation startet,
-             * wenn die Grafik ungefähr
-             * unten ins Sichtfeld kommt.
-             */
-
-            const animationStart =
-                window.innerHeight * 0.85;
-
-
-            /*
-             * Animation ist abgeschlossen,
-             * wenn die Grafik weiter
-             * nach oben gescrollt wurde.
-             */
-
-            const animationEnd =
-                window.innerHeight * 0.45;
-
-
-            const rawProgress =
-                clamp(
-                    (
-                        animationStart
-                        - rect.top
-                    )
-                    /
-                    (
-                        animationStart
-                        - animationEnd
-                    )
-                );
-
-
-            const progress =
-                easeInOut(
-                    rawProgress
-                );
-
-
-            /*
-             * Jeder 2025-Wert wächst
-             * proportional zum Scrollfortschritt.
-             */
-
-            const currentValues =
-                values2025.map(value => {
-
-                    return value * progress;
-                });
-
-
-            licenceDevelopmentChart
-                .data
-                .datasets[1]
-                .data =
-                currentValues;
-
-
-            /*
-             * 'none' verhindert,
-             * dass Chart.js zusätzlich
-             * eine eigene Animation ausführt.
-             */
-
-            licenceDevelopmentChart.update(
-                'none'
-            );
-        };
-
-
-    /*
-     * Scroll-Events werden über
-     * requestAnimationFrame gebündelt.
-     */
-
-    let ticking =
-        false;
-
-
-    const requestLicenceUpdate =
-        () => {
-
-            if (!ticking) {
-
-                window.requestAnimationFrame(
-                    () => {
-
-                        updateLicenceChart();
-
-                        ticking =
-                            false;
-                    }
-                );
-
-
-                ticking =
-                    true;
-            }
-        };
-
-
-    window.addEventListener(
-        'scroll',
-        requestLicenceUpdate,
-        { passive: true }
+            licenceDevelopmentChart.update('none');
+        }
     );
-
-
-    window.addEventListener(
-        'resize',
-        requestLicenceUpdate
-    );
-
-
-    /* Anfangszustand setzen */
-
-    updateLicenceChart();
 }
-
-
 // ========================================
 // Relative Unfallbeteiligung 2025
 // ========================================
@@ -992,19 +989,19 @@ async function createAccidentRateChart() {
                             /* Linie normal blau */
 
                             borderColor:
-                                '#6594DB',
+                                '#8AB8F5' ,
 
                             backgroundColor:
-                                '#6594DB',
+                                '#8AB8F5',
 
 
                             /* Punkte normal blau */
 
                             pointBackgroundColor:
-                                '#6594DB',
+                                '#8AB8F5',
 
                             pointBorderColor:
-                                '#6594DB',
+                                '#8AB8F5',
 
 
                             /* Punkt beim Hover orange */
@@ -1308,6 +1305,8 @@ function initAccidentRateScrollReveal() {
             );
         };
 
+    /* Höchsten Scrollfortschritt speichern */
+    let maxProgress = 0;
 
     const updateAccidentRateChart =
         () => {
@@ -1401,10 +1400,14 @@ function initAccidentRateScrollReveal() {
                     : 1;
 
 
+            /* Beim Zurückscrollen Fortschritt behalten */
             const progress =
-                easeInOut(
-                    rawProgress
+                Math.max(
+                    maxProgress,
+                    easeInOut(rawProgress)
                 );
+
+            maxProgress = progress;
 
 
             accidentRateChart.$revealProgress =
@@ -1550,14 +1553,20 @@ async function createSeverityChart() {
                     + minor;
 
 
-                const severeShare =
-                    ((fatal + serious)
-                        / total)
-                    * 100;
-
+                /* Anteile einzeln berechnen */
 
                 const lightShare =
                     (minor / total)
+                    * 100;
+
+
+                const seriousShare =
+                    (serious / total)
+                    * 100;
+
+
+                const fatalShare =
+                    (fatal / total)
                     * 100;
 
 
@@ -1568,9 +1577,13 @@ async function createSeverityChart() {
                     lightShare:
                     lightShare,
 
-                    severeShare:
-                    severeShare
+                    seriousShare:
+                    seriousShare,
+
+                    fatalShare:
+                    fatalShare
                 };
+
             }
         );
 
@@ -1583,6 +1596,8 @@ async function createSeverityChart() {
         );
 
 
+    /* Drei separate Unfallkategorien */
+
     const lightValues =
         severityData.map(
             row => {
@@ -1591,10 +1606,18 @@ async function createSeverityChart() {
         );
 
 
-    const severeValues =
+    const seriousValues =
         severityData.map(
             row => {
-                return row.severeShare;
+                return row.seriousShare;
+            }
+        );
+
+
+    const fatalValues =
+        severityData.map(
+            row => {
+                return row.fatalShare;
             }
         );
 
@@ -1611,19 +1634,21 @@ async function createSeverityChart() {
                     labels,
 
                     datasets: [
+
+                        /* Leichte Unfälle – Hellblau */
+
                         {
                             label:
                                 'Leicht',
 
+
                             data:
-                                labels.map(
-                                    () => {
-                                        return 100;
-                                    }
-                                ),
+                            lightValues,
 
                             backgroundColor:
-                                '#6594DB',
+                                context => context.active
+                                    ? '#E38500'
+                                    : '#8AB8F5',
 
                             borderRadius:
                                 4,
@@ -1632,19 +1657,42 @@ async function createSeverityChart() {
                                 'severity'
                         },
 
+
+                        /* Schwere Unfälle – Mittelblau */
+
                         {
                             label:
-                                'Schwer / tödlich',
+                                'Schwer',
 
                             data:
-                                labels.map(
-                                    () => {
-                                        return 0;
-                                    }
-                                ),
+                                labels.map(() => 0),
 
                             backgroundColor:
-                                '#E38500',
+                                context => context.active
+                                    ? '#E38500'
+                                    : '#5F95E6',
+
+                            borderRadius:
+                                4,
+
+                            stack:
+                                'severity'
+                        },
+
+
+                        /* Tödliche Unfälle – Dunkelblau */
+
+                        {
+                            label:
+                                'Tödlich',
+
+                            data:
+                                labels.map(() => 0),
+
+                            backgroundColor:
+                                context => context.active
+                                    ? '#E38500'
+                                    : '#244A83',
 
                             borderRadius:
                                 4,
@@ -1653,6 +1701,7 @@ async function createSeverityChart() {
                                 'severity'
                         }
                     ]
+
                 },
 
                 options: {
@@ -1664,6 +1713,10 @@ async function createSeverityChart() {
 
                     indexAxis:
                         'y',
+
+                    /* Animation wird ausschliesslich durch Scrollen gesteuert */
+                    animation:
+                        false,
 
                     plugins: {
                         legend: {
@@ -1747,83 +1800,57 @@ async function createSeverityChart() {
 
     observeSeverityChart(
         lightValues,
-        severeValues
+        seriousValues,
+        fatalValues
     );
+
 }
 
 
-// Schwere Anteile beim Scrollen einblenden
+// ========================================
+// Unfallschwere: Sticky-Scroll
+// ========================================
 
 function observeSeverityChart(
     lightValues,
-    severeValues
+    seriousValues,
+    fatalValues
 ) {
 
-    const severityGraphic =
-        document.querySelector(
-            '.graphic--severity'
-        );
+    if (!severityChart) {
+        return;
+    }
+
+    initStickyChartScroll(
+        '.severity-scrolly',
+        '.graphic--severity',
+
+        progress => {
+
+            /* Leicht bleibt von Beginn an sichtbar */
+
+            severityChart.data.datasets[0].data =
+                lightValues;
 
 
-    const observer =
-        new IntersectionObserver(
-            entries => {
+            /* Schwer wächst beim Scrollen dazu */
 
-                entries.forEach(
-                    entry => {
-
-                        if (
-                            entry.isIntersecting
-                        ) {
-
-                            showSeverityShares(
-                                lightValues,
-                                severeValues
-                            );
-
-                            observer.unobserve(
-                                severityGraphic
-                            );
-                        }
-                    }
-                );
-            },
-
-            {
-                threshold:
-                    0.6
-            }
-        );
+            severityChart.data.datasets[1].data =
+                seriousValues.map(value => value * progress);
 
 
-    observer.observe(
-        severityGraphic
+            /* Tödlich wächst beim Scrollen dazu */
+
+            severityChart.data.datasets[2].data =
+                fatalValues.map(value => value * progress);
+
+
+            /* Diagramm ohne zusätzliche Animation aktualisieren */
+
+            severityChart.update('none');
+        }
     );
 }
-
-
-function showSeverityShares(
-    lightValues,
-    severeValues
-) {
-
-    severityChart
-        .data
-        .datasets[0]
-        .data =
-        lightValues;
-
-
-    severityChart
-        .data
-        .datasets[1]
-        .data =
-        severeValues;
-
-
-    severityChart.update();
-}
-
 
 // ========================================
 // Abschlussdiagramm mit aktuellem Alter
@@ -2038,16 +2065,16 @@ async function createFinalAgeChart() {
                                 false,
 
                             borderColor:
-                                '#6594DB',
+                                '#8AB8F5' ,
 
                             backgroundColor:
-                                '#6594DB',
+                                '#8AB8F5',
 
                             pointBackgroundColor:
-                                '#6594DB',
+                                '#8AB8F5',
 
                             pointBorderColor:
-                                '#6594DB',
+                                '#8AB8F5',
 
                             pointRadius:
                                 5,
