@@ -1,4 +1,12 @@
 // ========================================
+// Chart.js – globale Bibliothek
+// ========================================
+
+/** @type {any} */
+const Chart = window.Chart;
+
+
+// ========================================
 // Altersfrage oben und unten
 // ========================================
 
@@ -335,7 +343,7 @@ async function createAbsoluteAccidentsChart() {
                             callback:
                                 function (value) {
 
-                                    return value.toLocaleString(
+                                    return Number(value).toLocaleString(
                                         'de-CH'
                                     );
                                 }
@@ -433,10 +441,19 @@ function initStickyChartScroll(
     // Maximal 180 Pixel oder 22 % der Fensterhöhe.
 
     const getStopOffset = () => {
-        return Math.min(
+
+        // Standardposition für alle Diagramme
+        const standardOffset = Math.min(
             180,
             window.innerHeight * 0.22
         );
+
+        // Erste animierte Grafik nochmals früher anhalten
+        if (scrollySelector === '.licence-development-scrolly') {
+            return standardOffset + 190;
+        }
+
+        return standardOffset;
     };
 
 
@@ -1101,7 +1118,7 @@ async function createLicenceDevelopmentChart() {
 
                                 callback: function (value) {
 
-                                    return value.toLocaleString(
+                                    return Number(value).toLocaleString(
                                         'de-CH'
                                     );
                                 }
@@ -1190,17 +1207,15 @@ let accidentRateChart;
  *
  * Achsen, Raster und Beschriftungen bleiben
  * während des Aufbaus vollständig sichtbar.
- */
 
-const accidentRateRevealPlugin = {
+ */const accidentRateRevealPlugin = {
 
     id:
         'accidentRateReveal',
 
     // Chart.js ruft diesen Hook automatisch auf.
     // Er begrenzt den sichtbaren Bereich der Datenlinie.
-    beforeDatasetsDraw(chart) {
-
+    ['beforeDatasetsDraw'](chart) {
         const progress =
             Math.min(
                 Math.max(
@@ -1241,13 +1256,18 @@ const accidentRateRevealPlugin = {
     },
 
 
-    afterDatasetsDraw(chart) {
+    ['afterDatasetsDraw'](chart) {
 
         if (
             chart.$revealClipActive
         ) {
 
-            chart.ctx.restore();
+            // Ursprünglichen Canvas-Zeichenkontext wiederherstellen
+            const ctx = chart.canvas.getContext('2d');
+
+            if (ctx) {
+                ctx.restore();
+            }
 
             chart.$revealClipActive =
                 false;

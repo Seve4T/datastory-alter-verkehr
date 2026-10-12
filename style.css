@@ -77,7 +77,9 @@
 }
 
 html {
-    scroll-behavior: smooth;
+    /* Die Sticky-Scrollsteuerung übernimmt
+       das Anhalten der Diagramme selbst. */
+    scroll-behavior: auto;
 }
 
 body {
@@ -106,7 +108,8 @@ body {
     background-color: var(--color-background);
     color: var(--color-text);
 
-    font-family: var(--font-primary);
+    /* Schrift mit generischer Ersatzschrift */
+    font-family: var(--font-primary), sans-serif;
     font-size: var(--font-size-body);
     font-weight: var(--font-weight-regular);
     line-height: var(--line-height-body);
