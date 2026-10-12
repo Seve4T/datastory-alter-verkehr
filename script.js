@@ -204,8 +204,12 @@ async function createAbsoluteAccidentsChart() {
     const trafficData =
         await loadTrafficData();
 
+    /* ========================================
+       Daten für das Balkendiagramm vorbereiten
+    ======================================== */
 
-    // Nur Daten aus dem Jahr 2025 verwenden
+    // Für diese Grafik werden nur die
+    // absoluten Unfallbeteiligungen von 2025 benötigt.
 
     const data2025 =
         trafficData.filter(row => {
@@ -213,15 +217,11 @@ async function createAbsoluteAccidentsChart() {
         });
 
 
-    // Altersgruppen für die X-Achse
-
     const labels =
         data2025.map(row => {
             return row.age_group;
         });
 
-
-    // Anzahl ursächlich beteiligter PW-Lenkender
 
     const values =
         data2025.map(row => {
@@ -229,7 +229,6 @@ async function createAbsoluteAccidentsChart() {
                 row.causally_involved
             );
         });
-
 
     // Balkendiagramm erstellen
 
@@ -369,15 +368,14 @@ async function createAbsoluteAccidentsChart() {
     );
 }
 
-
 // ========================================
 // Gemeinsame Sticky-Scrollsteuerung
 // ========================================
 
-
-// ========================================
-// Gemeinsame Sticky-Scrollsteuerung
-// ========================================
+// Steuert den schrittweisen Aufbau der
+// drei Diagramme während des Scrollens.
+// Die Diagramme werden beim Scrollen
+// angehalten und nach Abschluss freigegeben.
 
 function initStickyChartScroll(
     scrollySelector,
@@ -427,18 +425,12 @@ function initStickyChartScroll(
 
 
     /* ========================================
-       Halteposition berechnen
-    ======================================== */
-
-    // Grafik beginnt etwas unter dem oberen
-    // Bildschirmrand.
-
-    /* ========================================
        Halteposition der Diagramme
     ======================================== */
 
-// Diagramme früher stoppen und weiter
-// unten im sichtbaren Bildschirm halten.
+    // Abstand zwischen Bildschirmoberkante
+    // und Grafik beim Anhalten des Scrollens.
+    // Maximal 180 Pixel oder 22 % der Fensterhöhe.
 
     const getStopOffset = () => {
         return Math.min(
@@ -792,16 +784,14 @@ function initStickyChartScroll(
         const currentScrollY =
             window.scrollY;
 
-        /* ========================================
-       Zurückscrollen während der Animation
-    ======================================== */
+        /* Zurückscrollen während der Animation */
 
         if (active) {
 
             const stopY = getStopY();
 
-            // Aufwärtsbewegung jederzeit zulassen.
-            // Die Grafik bleibt beim bisherigen Fortschritt.
+            // Beim Zurückscrollen die Sperre aufheben.
+            // Der bisherige Animationsfortschritt bleibt erhalten.
             if (currentScrollY < stopY - 2) {
 
                 active = false;
@@ -810,8 +800,8 @@ function initStickyChartScroll(
                 return;
             }
 
-            // Nur Abwärtsbewegungen wieder
-            // auf die Halteposition zurücksetzen.
+            // Bei einem Scrollsprung nach unten
+            // zur Halteposition zurückkehren.
             if (currentScrollY > stopY + 2) {
 
                 window.scrollTo({
@@ -1148,16 +1138,18 @@ async function createLicenceDevelopmentChart() {
 }
 
 
-/*
- * Scrollgesteuerte Animation
- *
- * Die 2025-Balken wachsen abhängig davon,
- * wie weit die Grafik ins Sichtfeld scrollt.
- */
-
 // ========================================
 // Führerausweisentwicklung: Sticky-Scroll
 // ========================================
+
+/*
+ * Verbindet das Diagramm mit der gemeinsamen
+ * Scrollsteuerung.
+ *
+ * Die Balken von 2016 bleiben sichtbar.
+ * Die Balken von 2025 werden während
+ * der Scrollanimation schrittweise aufgebaut.
+ */
 
 function initLicenceScrollAnimation(values2025) {
 
@@ -1205,7 +1197,8 @@ const accidentRateRevealPlugin = {
     id:
         'accidentRateReveal',
 
-
+    // Chart.js ruft diesen Hook automatisch auf.
+    // Er begrenzt den sichtbaren Bereich der Datenlinie.
     beforeDatasetsDraw(chart) {
 
         const progress =
@@ -1309,18 +1302,30 @@ async function createAccidentRateChart() {
             return row.age_group;
         });
 
-
+    /* ========================================
+       Relative Unfallbeteiligung übernehmen
+    ======================================== */
 
     const values =
         sortedData.map(row => {
 
-            // Bereits berechnete Kennzahl aus
-            // der Datenbank (JSON) übernehmen
-            return Number(row.rate_per_100k);
+            // Kennzahl aus den geladenen Daten
+            // verwenden, nicht neu berechnen.
+            const rate = row.rate_per_100k;
 
+            // Fehlende oder ungültige Werte
+            // nicht als 0 darstellen.
+            if (
+                rate === null ||
+                rate === undefined ||
+                rate === '' ||
+                !Number.isFinite(Number(rate))
+            ) {
+                return null;
+            }
+
+            return Number(rate);
         });
-
-
 
     accidentRateChart =
         new Chart(
@@ -1547,24 +1552,23 @@ async function createAccidentRateChart() {
 }
 
 
-/*
- * Scrollgesteuerter Aufbau der Linie.
- *
- * Die Linie beginnt bereits, während
- * das Diagramm ins Sichtfeld scrollt.
- *
- * Beim Erreichen der Sticky-Position
- * ist bereits ein grosser Teil aufgebaut.
- *
- * Sobald die Sticky-Phase endet,
- * ist auch die Linie vollständig sichtbar.
- */
-
-
 /* ========================================
-   Relative Unfallbeteiligung:
-   Bildschirm während des Aufbaus anhalten
+   Relative Unfallbeteiligung: Sticky-Scroll
 ======================================== */
+
+/*
+ * Die Datenlinie wird schrittweise von
+ * links nach rechts sichtbar gemacht.
+ *
+ * Die gemeinsame Scrollsteuerung hält
+ * die Grafik während des Aufbaus an.
+ *
+ * Achsen und Beschriftungen bleiben
+ * währenddessen vollständig sichtbar.
+ *
+ * Nach Abschluss wird das normale
+ * Abwärtsscrollen wieder freigegeben.
+ */
 
 function initAccidentRateScrollReveal() {
 
@@ -1668,27 +1672,37 @@ async function createSeverityChart() {
                 );
 
 
+
+                /* ========================================
+                   Gesamtzahl der Unfallbeteiligungen
+                ======================================== */
+
                 const total =
                     fatal
                     + serious
                     + minor;
 
+                /* ========================================
+                   Prozentanteile berechnen
+                ======================================== */
 
-                /* Anteile einzeln berechnen */
+                // Ohne gültige Gesamtzahl können
+                // keine Prozentanteile berechnet werden.
 
                 const lightShare =
-                    (minor / total)
-                    * 100;
-
+                    total > 0
+                        ? (minor / total) * 100
+                        : null;
 
                 const seriousShare =
-                    (serious / total)
-                    * 100;
-
+                    total > 0
+                        ? (serious / total) * 100
+                        : null;
 
                 const fatalShare =
-                    (fatal / total)
-                    * 100;
+                    total > 0
+                        ? (fatal / total) * 100
+                        : null;
 
 
                 return {
@@ -2707,20 +2721,15 @@ if (
 
 
                 /*
-                 * Titel und Untertitel
-                 * relativ früh ausblenden.
-                 */
+            * Titel und Untertitel
+            * relativ früh ausblenden.
+            */
 
-                const textOpacity =
+                heroContent.style.opacity =
                     Math.max(
                         1 - rawProgress * 2.5,
                         0
                     );
-
-
-                heroContent.style.opacity =
-                    textOpacity;
-
 
                 /*
                  * Titel beim Ausblenden

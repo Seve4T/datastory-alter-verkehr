@@ -29,21 +29,11 @@
     --color-white: #FFFCFE;
     --color-orange: #E38500;
     --color-blue: #6594DB;
-    --color-brown: #734300;
 
     /* Semantische Farben */
     --color-background: var(--color-navy);
     --color-text: var(--color-white);
     --color-heading: var(--color-orange);
-    --color-highlight: var(--color-orange);
-    --color-secondary: var(--color-blue);
-
-    /* Diagramme */
-    --color-chart-primary: var(--color-blue);
-    --color-chart-highlight: var(--color-orange);
-    --color-chart-secondary: var(--color-brown);
-    --color-chart-label: var(--color-white);
-    --color-chart-grid: rgba(255, 252, 254, 0.15);
 
     /* Schrift */
     --font-primary: "Google Sans Flex", Arial, sans-serif;
@@ -51,11 +41,8 @@
     /* Schriftgrössen */
     --font-size-small: 0.875rem;
     --font-size-body: 1.4rem;
-
     --font-size-h3: 2rem;
-    --font-size-h2: 3rem;
     --font-size-h1: 5rem;
-
     --font-size-data: 5rem;
 
     /* Schriftstärken */
@@ -63,17 +50,14 @@
     --font-weight-bold: 800;
 
     /* Zeilenhöhen */
-    --line-height-tight: 1.05;
     --line-height-heading: 1.15;
     --line-height-body: 1.6;
 
     /* Abstände */
-    --space-xs: 0.5rem;
     --space-sm: 1rem;
     --space-md: 2rem;
     --space-lg: 4rem;
     --space-xl: 6rem;
-    --space-2xl: 10rem;
 
     /* Layout */
     --content-width: 1280px;
@@ -228,60 +212,22 @@ figcaption {
    5. Layout
 ======================================== */
 
+/* Zentrale Inhaltsbreite und Seitenabstände */
+
 .container {
     width: min(calc(100% - 6rem), var(--content-width));
     margin-inline: auto;
 }
 
-.two-column {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--column-gap);
-    align-items: start;
-}
-
-.two-column--visual {
-    grid-template-columns: 0.8fr 1.2fr;
-}
-
-.two-column--text {
-    grid-template-columns: 1.2fr 0.8fr;
-}
-
-.column {
-    min-width: 0;
-}
-
-
-/* Vorbereitung für spätere Sticky-Elemente */
-
-.column--sticky {
-    /* position: sticky; */
-    /* top: 4rem; */
-}
-
-
 /* ========================================
    6. Sections
 ======================================== */
 
-/*
-   Sections erhalten keinen automatischen
-   Abstand oben und unten.
-   Die Abstände werden dort gesetzt,
-   wo sie inhaltlich wirklich benötigt werden.
-*/
+/* Abstände werden bei den jeweiligen
+   Artikelabschnitten individuell festgelegt. */
 
 section {
     padding-block: 0;
-}
-
-
-/* Grössere Story-Bereiche können bewusst
-   zusätzlichen Abstand erhalten. */
-
-.story-section {
-    padding-block: var(--space-xl);
 }
 /* ========================================
    Abstände vor neuen Kapitelüberschriften
@@ -436,14 +382,6 @@ p + h2 {
     max-width: 680px;
 }
 
-
-/* Gleichmässiger Abstand zwischen den Textabsätzen */
-
-.article-start__text p + p {
-    margin-top: 0;
-}
-
-
 /* Letzter Textabsatz geht direkt in die Datengrundlage über */
 
 .article-start__text p:last-of-type {
@@ -511,34 +449,7 @@ p + h2 {
     margin: 0 0 var(--space-sm);
 }
 
-
 /* Text, der nach dem Diagramm weiterläuft */
-
-.absolute-accidents__continuation {
-    max-width: 680px;
-
-    margin-top: var(--space-lg);
-}
-
-/* ========================================
-   Abstand vor der Unfallschwere-Grafik
-======================================== */
-
-/* Gleicher Abstand wie beim Liniendiagramm */
-
-.severity-scrolly {
-    margin-top: var(--space-sm);
-}
-
-.severity-scrolly .chart-container {
-    margin-top: var(--space-sm);
-}
-
-/* ========================================
-   7.7 Breite Datenabschnitte
-======================================== */
-
-/* Einheitlicher Abstand nach dem ersten Diagrammbereich */
 
 .absolute-accidents__continuation {
     width: 100%;
@@ -546,6 +457,28 @@ p + h2 {
 
     margin-top: var(--space-lg);
 }
+
+/* Unfallschwere */
+
+.severity-scrolly {
+    margin: 0 0 var(--space-lg);
+}
+
+/* Diagrammhöhe und Abstand zum Einleitungstext */
+
+.severity-scrolly .chart-container {
+    height: clamp(
+            260px,
+            calc(100vh - 160px),
+            520px
+    );
+
+    margin-top: 0;
+}
+
+/* ========================================
+   7.7 Breite Datenabschnitte
+======================================== */
 
 .absolute-accidents__continuation h2,
 .absolute-accidents__continuation p {
@@ -711,12 +644,14 @@ p + h2 {
     );
 }
 
-
 /* Unfallschwere */
 
 .severity-scrolly {
     margin-top: 0;
+    margin-bottom: var(--space-lg);
 }
+
+/* Diagrammhöhe und Abstand zum Einleitungstext */
 
 .severity-scrolly .chart-container {
     height: clamp(
@@ -726,13 +661,6 @@ p + h2 {
     );
 
     margin-top: 0;
-}
-
-
-/* Abstand nach der Unfallschwere-Grafik */
-
-.severity-scrolly {
-    margin-bottom: var(--space-lg);
 }
 
 /* ========================================
@@ -747,45 +675,6 @@ p + h2 {
 
 .licence-development-scrolly .chart-container {
     margin-top: var(--space-sm);
-}
-
-/* ========================================
-   8. Hervorhebungen
-======================================== */
-
-.text-highlight,
-.highlight-text {
-    color: var(--color-orange);
-}
-
-.text-secondary {
-    color: var(--color-blue);
-}
-
-.data-number {
-    margin: 0;
-
-    color: var(--color-orange);
-
-    font-size: var(--font-size-data);
-    font-weight: var(--font-weight-bold);
-    line-height: 1;
-}
-
-
-/* ========================================
-   9. Kleine Überschriften
-======================================== */
-
-.eyebrow {
-    margin-bottom: var(--space-sm);
-
-    color: var(--color-blue);
-
-    font-size: var(--font-size-small);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
 }
 
 /* ========================================
@@ -955,10 +844,7 @@ p + h2 {
 ======================================== */
 
 .graphic {
-    margin-top: var(--space-lg);
-    margin-bottom: var(--space-lg);
-    margin-left: 0;
-    margin-right: 0;
+    margin: var(--space-lg) 0;
 }
 
 .chart-container {
@@ -1217,9 +1103,6 @@ p + h2 {
 
     /* Zweispaltige Layouts werden einspaltig */
 
-    .two-column,
-    .two-column--visual,
-    .two-column--text,
     .article-start,
     .absolute-accidents__intro,
     .conclusion-layout {
@@ -1229,7 +1112,6 @@ p + h2 {
 
     /* Verhindert horizontales Überlaufen */
 
-    .column,
     .article-start__text,
     .absolute-accidents__text,
     .age-question,
@@ -1322,18 +1204,6 @@ p + h2 {
         width: 100%;
     }
 
-    .article-start .age-question {
-        width: 100%;
-        max-width: none;
-        padding-top: 0;
-    }
-
-    .article-start .age-slider {
-        width: 100%;
-        max-width: none;
-    }
-
-
     /* ========================================
        Absolute Unfallzahlen
     ======================================== */
@@ -1407,13 +1277,6 @@ p + h2 {
         height: clamp(220px, 50vh, 400px);
         margin: var(--space-sm) 0;
     }
-
-    /* Die Canvas-Fläche folgt dem Container */
-
-    .chart-container canvas {
-        max-width: 100%;
-    }
-
 
     /* ========================================
        Scrollgesteuerte Diagramme
