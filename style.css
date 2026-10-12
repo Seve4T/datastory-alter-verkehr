@@ -457,7 +457,7 @@ p + h2 {
     width: 100%;
     max-width: none;
 
-    padding-top: 1.25rem;
+    padding-top: 0;
 }
 
 .article-start .age-slider {
@@ -501,7 +501,7 @@ p + h2 {
 
 .absolute-accidents__intro .graphic {
     margin: 0;
-    padding-top: 1.5rem;
+    padding-top: 0;
 }
 
 .absolute-accidents__intro .chart-container {
@@ -518,6 +518,20 @@ p + h2 {
     max-width: 680px;
 
     margin-top: var(--space-lg);
+}
+
+/* ========================================
+   Abstand vor der Unfallschwere-Grafik
+======================================== */
+
+/* Gleicher Abstand wie beim Liniendiagramm */
+
+.severity-scrolly {
+    margin-top: var(--space-sm);
+}
+
+.severity-scrolly .chart-container {
+    margin-top: var(--space-sm);
 }
 
 /* ========================================
@@ -700,12 +714,18 @@ p + h2 {
 
 /* Unfallschwere */
 
+.severity-scrolly {
+    margin-top: 0;
+}
+
 .severity-scrolly .chart-container {
     height: clamp(
             260px,
             calc(100vh - 160px),
             520px
     );
+
+    margin-top: 0;
 }
 
 
@@ -713,6 +733,20 @@ p + h2 {
 
 .severity-scrolly {
     margin-bottom: var(--space-lg);
+}
+
+/* ========================================
+   Abstand vor der Führerausweisgrafik
+======================================== */
+
+/* Gleicher Abstand wie beim Liniendiagramm */
+
+.licence-development-scrolly {
+    margin-top: var(--space-sm);
+}
+
+.licence-development-scrolly .chart-container {
+    margin-top: var(--space-sm);
 }
 
 /* ========================================
@@ -803,11 +837,12 @@ p + h2 {
     margin-bottom: 0;
 }
 
+
 /* ========================================
    Impressum im Footer
 ======================================== */
 
-/* Abstand zum Artikel und Seitenende */
+/* Abstand zwischen Artikel und Impressum */
 
 .site-footer {
     padding-top: var(--space-xl);
@@ -815,42 +850,104 @@ p + h2 {
 }
 
 
-/* Bestehendes Dropdown-Design übernehmen */
+/* Bestehendes Dropdown-Design beibehalten */
 
 .site-footer .data-notes {
+    width: 100%;
+    max-width: 850px;
+
     margin-bottom: 0;
 }
+
+
+/* Hauptliste ohne Aufzählungspunkte */
+
+.site-footer .data-notes > ul {
+    list-style: none;
+
+    margin-top: var(--space-md);
+    padding-left: 0;
+}
+
+
+/* Einzelne Impressumsbereiche klar trennen */
+
+.site-footer .data-notes > ul > li {
+    margin-bottom: var(--space-md);
+}
+
+
+/* Letzter Bereich ohne zusätzlichen Abstand */
+
+.site-footer .data-notes > ul > li:last-child {
+    margin-bottom: 0;
+}
+
+
+/* Überschriften der Impressumsbereiche */
+
+.site-footer .data-notes__label {
+    display: block;
+
+    margin-bottom: 0.4rem;
+
+    font-weight: var(--font-weight-bold);
+    line-height: 1.4;
+}
+
 
 /* Einheitliche Textabstände im Impressum */
 
 .site-footer .data-notes p {
+    width: 100%;
     max-width: none;
+
     margin-top: 0;
-    margin-bottom: var(--space-sm);
+    margin-bottom: 0.75rem;
+
     font-size: inherit;
-    line-height: inherit;
+    line-height: 1.5;
 }
 
 
-/* Letzter Absatz ohne zusätzlichen Abstand */
+/* Letzter Absatz eines Bereichs */
 
 .site-footer .data-notes p:last-child {
     margin-bottom: 0;
 }
 
 
-/* E-Mail-Adresse wie übrigen Text darstellen */
+/* Datenquellen als eingerückte Liste */
+
+.site-footer .data-notes ul ul {
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+
+    padding-left: 1.5rem;
+
+    list-style: disc;
+}
+
+
+/* Abstand zwischen einzelnen Datenquellen */
+
+.site-footer .data-notes ul ul li {
+    margin-bottom: 0.5rem;
+}
+
+
+/* Letzte Datenquelle ohne Zusatzabstand */
+
+.site-footer .data-notes ul ul li:last-child {
+    margin-bottom: 0;
+}
+
+
+/* Kontaktlink sichtbar halten */
 
 .site-footer .data-notes a {
     color: var(--color-white);
     text-decoration: underline;
-}
-
-/* Aufzählungspunkte vor Impressumstiteln entfernen */
-
-.site-footer .data-notes > ul {
-    list-style: none;
-    padding-left: 0;
 }
 
 /* ========================================
@@ -874,8 +971,25 @@ p + h2 {
     margin-block: var(--space-lg);
 }
 
+/* ========================================
+   Fehlermeldungen bei Diagrammen
+======================================== */
 
+.chart-error {
+    width: 100%;
+    max-width: none;
 
+    margin: 0;
+    padding: var(--space-md);
+
+    border: 1px solid var(--color-blue);
+    border-radius: 6px;
+
+    color: var(--color-white);
+
+    font-size: var(--font-size-small);
+    line-height: 1.5;
+}
 
 /* ========================================
    13. Altersfrage
@@ -1083,10 +1197,502 @@ p + h2 {
 }
 
 
+
 /* ========================================
    16. Mobile
 ======================================== */
 
-/*
-   Mobile-Ansicht folgt später.
-*/
+@media (max-width: 768px) {
+
+    /* ========================================
+       Grundlayout
+    ======================================== */
+
+    /* Seitenabstand für Mobile verkleinern */
+
+    .container {
+        width: calc(100% - 2rem);
+        margin-inline: auto;
+    }
+
+    /* Zweispaltige Layouts werden einspaltig */
+
+    .two-column,
+    .two-column--visual,
+    .two-column--text,
+    .article-start,
+    .absolute-accidents__intro,
+    .conclusion-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-md);
+    }
+
+    /* Verhindert horizontales Überlaufen */
+
+    .column,
+    .article-start__text,
+    .absolute-accidents__text,
+    .age-question,
+    .graphic {
+        min-width: 0;
+    }
+
+
+    /* ========================================
+       Typografie
+    ======================================== */
+
+    h1 {
+        font-size: clamp(2.5rem, 9vw, 4rem);
+        line-height: 1;
+    }
+
+    h2 {
+        font-size: 1.55rem;
+        line-height: 1.3;
+    }
+
+    h3 {
+        font-size: 1.4rem;
+    }
+
+    p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    /* Texte nutzen die verfügbare Breite */
+
+    h1,
+    h2,
+    h3,
+    p {
+        max-width: 100%;
+    }
+
+    figcaption {
+        max-width: 100%;
+        font-size: 0.85rem;
+        line-height: 1.45;
+    }
+
+
+    /* ========================================
+       Scroll-Hero
+    ======================================== */
+
+    /* Scrollhöhe und Sticky-Animation
+       bleiben unverändert */
+
+    .hero__content {
+        padding-top: clamp(5rem, 15vh, 9rem);
+    }
+
+    .hero__content h1 {
+        width: 100%;
+        font-size: clamp(2.7rem, 10vw, 4.5rem);
+        margin-bottom: var(--space-md);
+    }
+
+    .article-subtitle {
+        max-width: 100%;
+        font-size: clamp(1.35rem, 5vw, 2rem);
+        line-height: 1.25;
+    }
+
+    .hero__lead {
+        max-width: 100%;
+        font-size: clamp(1rem, 4vw, 1.4rem);
+        line-height: 1.5;
+    }
+
+
+    /* ========================================
+       Artikel-Einstieg
+    ======================================== */
+
+    .article-start {
+        padding-top: var(--space-lg);
+        padding-bottom: var(--space-md);
+    }
+
+    /* Erst Text, danach Altersfrage */
+
+    .article-start__text {
+        width: 100%;
+    }
+
+    .article-start .age-question {
+        width: 100%;
+        max-width: none;
+        padding-top: 0;
+    }
+
+    .article-start .age-slider {
+        width: 100%;
+        max-width: none;
+    }
+
+
+    /* ========================================
+       Absolute Unfallzahlen
+    ======================================== */
+
+    /* Text und Diagramm stehen untereinander */
+
+    .absolute-accidents__intro {
+        padding-top: var(--space-md);
+    }
+
+    .absolute-accidents__text,
+    .absolute-accidents__intro .graphic {
+        width: 100%;
+        max-width: none;
+    }
+
+    .absolute-accidents__intro .graphic {
+        padding-top: 0;
+        margin: 0;
+    }
+
+    .absolute-accidents__intro .chart-container {
+        width: 100%;
+        max-width: none;
+        height: clamp(240px, 55vh, 400px);
+        margin: 0 0 var(--space-sm);
+    }
+
+    /* Fortsetzungstext einspaltig */
+
+    .absolute-accidents__continuation {
+        width: 100%;
+        max-width: none;
+        margin-top: var(--space-md);
+    }
+
+    .absolute-accidents__continuation h2,
+    .absolute-accidents__continuation p {
+        width: 100%;
+        max-width: none;
+    }
+
+
+    /* ========================================
+       Diagramme allgemein
+    ======================================== */
+
+    /* Alle Grafiken innerhalb der Textspalte */
+
+    .graphic,
+    .graphic--wide,
+    .chart-container,
+    .graphic--wide .chart-container {
+        width: 100%;
+        max-width: none;
+    }
+
+    /* Standardhöhe für nicht speziell
+       angepasste Diagramme */
+
+    .chart-container {
+        height: clamp(220px, 50vh, 400px);
+    }
+
+    .graphic--wide {
+        margin-top: var(--space-md);
+        margin-bottom: var(--space-lg);
+    }
+
+    .graphic--wide .chart-container {
+        height: clamp(220px, 50vh, 400px);
+        margin: var(--space-sm) 0;
+    }
+
+    /* Die Canvas-Fläche folgt dem Container */
+
+    .chart-container canvas {
+        max-width: 100%;
+    }
+
+
+    /* ========================================
+       Scrollgesteuerte Diagramme
+    ======================================== */
+
+    /* Scrollsteuerung bleibt in script.js
+       vollständig unverändert */
+
+    .chart-scrolly {
+        width: 100%;
+        margin-top: var(--space-md);
+    }
+
+    .chart-scrolly > .graphic {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+    }
+
+    .chart-scrolly .chart-container {
+        margin: var(--space-sm) 0;
+    }
+
+    /* Führerausweisentwicklung */
+
+    .licence-development-scrolly .chart-container {
+        height: clamp(200px, 43vh, 360px);
+    }
+
+    /* Unfallschwere */
+
+    .severity-scrolly .chart-container {
+        height: clamp(200px, 43vh, 360px);
+    }
+
+
+    /* ========================================
+       Relative Unfallbeteiligung
+    ======================================== */
+
+    .relative-accidents {
+        padding-top: var(--space-md);
+    }
+
+    .relative-accidents > p {
+        width: 100%;
+        max-width: none;
+    }
+
+    .accident-rate-scrolly {
+        width: 100%;
+        margin-top: 0;
+        margin-bottom: var(--space-md);
+    }
+
+    /* Text, Diagramm und Bildunterschrift
+       bleiben in derselben Reihenfolge */
+
+    .graphic.graphic--accident-rate {
+        width: 100%;
+        max-width: none;
+
+        height: auto;
+        min-height: 0;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+    .accident-rate__sticky-text {
+        width: 100%;
+        max-width: none;
+
+        margin-bottom: var(--space-sm);
+        font-size: 1rem;
+        line-height: 1.45;
+    }
+
+    .graphic.graphic--accident-rate .chart-container {
+        flex: 0 0 auto;
+
+        width: 100%;
+        height: clamp(180px, 35vh, 300px);
+
+        margin: var(--space-sm) 0;
+    }
+
+
+    /* ========================================
+       Unfallschwere und Textabschnitte
+    ======================================== */
+
+    .severity-scrolly {
+        margin-bottom: var(--space-md);
+    }
+
+    .accident-severity,
+    .limitations {
+        padding-top: var(--space-sm);
+    }
+
+    .text--wide {
+        width: 100%;
+        max-width: none;
+    }
+
+
+
+    /* ========================================
+       Altersregler
+    ======================================== */
+
+    /* Beide Altersfragen kompakter gestalten */
+
+    .age-question {
+        width: 100%;
+        max-width: none;
+    }
+
+    .age-question h2 {
+        font-size: 1.65rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .age-question__label {
+        max-width: 100%;
+        font-size: 1.05rem;
+        line-height: 1.45;
+        margin-bottom: 1rem;
+    }
+
+    /* Beide Slider-Bereiche */
+
+    .age-slider,
+    .final-age-slider,
+    .final-age-slider__track {
+        width: 100%;
+        max-width: none;
+    }
+
+    /* Alterszahl oberhalb des Reglers */
+
+    .age-slider__value {
+        gap: 0.4rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .age-slider__value output {
+        font-size: clamp(2.5rem, 10vw, 3.5rem);
+    }
+
+    .age-slider__value span {
+        font-size: 1rem;
+    }
+
+    /* Schieberegler etwas schlanker */
+
+    .age-slider__input {
+        width: 100%;
+        height: 5px;
+        margin: 0;
+    }
+
+    /* Minimum- und Maximum-Anzeige */
+
+    .age-slider__labels {
+        margin-top: 0.65rem;
+        font-size: 0.8rem;
+    }
+
+    /* Beide Buttons kompakter */
+
+    .age-slider__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: auto;
+        max-width: 100%;
+
+        margin-top: 1.25rem;
+        padding: 0.55rem 1rem;
+
+        font-size: 0.95rem;
+        line-height: 1.3;
+
+        border-radius: 999px;
+    }
+
+    /* Rückmeldung nach dem Speichern */
+
+    .age-slider__message {
+        margin-top: 0.75rem;
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }
+
+
+    /* ========================================
+       Fazit und Abschlussdiagramm
+    ======================================== */
+
+    /* Fazit zuerst, Altersfrage darunter */
+
+    .conclusion-layout {
+        padding-top: var(--space-lg);
+    }
+
+    .conclusion,
+    .conclusion-layout .age-question {
+        width: 100%;
+        max-width: none;
+    }
+
+    .conclusion-layout .final-age-slider {
+        margin-top: var(--space-md);
+    }
+
+    .final-age-result {
+        width: 100%;
+        max-width: none;
+        margin-top: var(--space-md);
+    }
+
+    .final-age-chart {
+        width: 100%;
+        height: clamp(220px, 45vh, 340px);
+    }
+
+    .final-age-result__title {
+        font-size: 0.85rem;
+    }
+
+    .final-age-chart__note {
+        max-width: 100%;
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+
+    /* ========================================
+       Datengrundlage und Impressum
+    ======================================== */
+
+    .data-notes {
+        width: 100%;
+        max-width: none;
+    }
+
+    .data-notes summary {
+        font-size: 1.1rem;
+    }
+
+    .data-notes ul {
+        padding-left: 1.25rem;
+    }
+
+    .data-notes li {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .site-footer {
+        padding-top: var(--space-lg);
+        padding-bottom: var(--space-md);
+    }
+
+    .site-footer .data-notes {
+        width: 100%;
+        max-width: none;
+    }
+
+    .site-footer .data-notes p {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .site-footer .data-notes > ul > li {
+        margin-bottom: var(--space-md);
+    }
+
+}

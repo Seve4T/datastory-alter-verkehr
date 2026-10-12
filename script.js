@@ -148,29 +148,46 @@ saveFinalAgeButton.addEventListener('click', () => {
 });
 
 
+
 // ========================================
 // Daten laden
 // ========================================
 
-async function loadTrafficData() {
+// Eine gemeinsame Anfrage für alle Diagramme
+let trafficDataPromise = null;
 
-    const response =
-        await fetch(
-            'https://zu-alt-fuers-steuer-im3.isobopad.myhostpoint.ch/unload.php'
-        );
+function loadTrafficData() {
 
-
-    if (!response.ok) {
-
-        throw new Error(
-            'Die Daten konnten nicht geladen werden.'
-        );
+    // Wenn bereits eine Anfrage läuft oder
+    // Daten geladen wurden, diese wiederverwenden.
+    if (trafficDataPromise) {
+        return trafficDataPromise;
     }
 
+    // JSON nur einmal vom Server anfordern
+    trafficDataPromise = fetch(
+        'https://zu-alt-fuers-steuer-im3.isobopad.myhostpoint.ch/unload.php'
+    )
+        .then(response => {
 
-    return await response.json();
+            if (!response.ok) {
+                throw new Error(
+                    'Die Daten konnten nicht geladen werden.'
+                );
+            }
+
+            return response.json();
+        })
+        .catch(error => {
+
+            // Bei einem Fehler einen neuen Versuch erlauben
+            trafficDataPromise = null;
+
+            throw error;
+        });
+
+    return trafficDataPromise;
 }
-
 
 // ========================================
 // Absolute Unfallzahlen 2025
@@ -357,6 +374,11 @@ async function createAbsoluteAccidentsChart() {
 // Gemeinsame Sticky-Scrollsteuerung
 // ========================================
 
+
+// ========================================
+// Gemeinsame Sticky-Scrollsteuerung
+// ========================================
+
 function initStickyChartScroll(
     scrollySelector,
     graphicSelector,
@@ -370,7 +392,7 @@ function initStickyChartScroll(
         document.querySelector(graphicSelector);
 
 
-    /* Ohne Grafik die vollständigen Werte anzeigen */
+    /* Ohne Grafik vollständig anzeigen */
 
     if (!scrolly || !graphic) {
         renderProgress(1);
@@ -378,118 +400,235 @@ function initStickyChartScroll(
     }
 
 
-    /* Animationszustand bis zum Reload speichern */
+    /* ========================================
+       Barrierefreiheit
+    ======================================== */
+
+    const reducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+    ).matches;
+
+    if (reducedMotion) {
+        renderProgress(1);
+        scrolly.classList.add('is-complete');
+        return;
+    }
+
+
+    /* ========================================
+       Zustand der Scrollanimation
+    ======================================== */
 
     let progress = 0;
     let finished = false;
+    let active = false;
     let lastTouchY = null;
+    let lastScrollY = window.scrollY;
 
 
-    /* Führerausweisgrafik hält deutlich früher an.
-     Andere Diagramme bleiben unverändert. */
+    /* ========================================
+       Halteposition berechnen
+    ======================================== */
 
-    const isReady = () => {
+    // Grafik beginnt etwas unter dem oberen
+    // Bildschirmrand.
 
-        const rect =
-            graphic.getBoundingClientRect();
+    /* ========================================
+       Halteposition der Diagramme
+    ======================================== */
 
-        if (
-            scrollySelector === '.licence-development-scrolly'
-        ) {
+// Diagramme früher stoppen und weiter
+// unten im sichtbaren Bildschirm halten.
 
-            return (
-                rect.top >= 0 &&
-                rect.bottom <= window.innerHeight + 100
-            );
-        }
-
-        return (
-            rect.top >= 0 &&
-            rect.bottom <= window.innerHeight - 32
+    const getStopOffset = () => {
+        return Math.min(
+            180,
+            window.innerHeight * 0.22
         );
     };
 
 
-    /* Gleiche weiche Bewegung wie bisher */
+    // Absolute Scrollposition bestimmen,
+    // an welcher die Grafik angehalten wird.
 
-    const easeInOut = value => {
+    const getStopY = () => {
 
-        return (
-            value * value * (3 - 2 * value)
+        const rect =
+            graphic.getBoundingClientRect();
+
+        return Math.max(
+            0,
+            window.scrollY
+            + rect.top
+            - getStopOffset()
         );
     };
 
 
     /* ========================================
-       Scrollbewegung baut das Diagramm auf
+       Animation berechnen
     ======================================== */
 
-    const advance = distance => {
+    const easeInOut = value => {
+        return value * value * (3 - 2 * value);
+    };
 
-        if (finished || distance <= 0) {
+
+    /* ========================================
+       Scrollsteuerung entfernen
+    ======================================== */
+
+    function removeListeners() {
+
+        window.removeEventListener(
+            'wheel',
+            onWheel
+        );
+
+        window.removeEventListener(
+            'keydown',
+            onKeyDown
+        );
+
+        window.removeEventListener(
+            'touchstart',
+            onTouchStart
+        );
+
+        window.removeEventListener(
+            'touchmove',
+            onTouchMove
+        );
+
+        window.removeEventListener(
+            'touchend',
+            onTouchEnd
+        );
+
+        window.removeEventListener(
+            'touchcancel',
+            onTouchEnd
+        );
+
+        window.removeEventListener(
+            'scroll',
+            onScroll
+        );
+    }
+
+
+    /* ========================================
+       Animation abschliessen
+    ======================================== */
+
+    function finishAnimation() {
+
+        progress = 1;
+        finished = true;
+        active = false;
+
+        renderProgress(1);
+
+        scrolly.classList.add(
+            'is-complete'
+        );
+
+        removeListeners();
+    }
+
+
+    /* ========================================
+       Scrollanimation aktivieren
+    ======================================== */
+
+    function activateAnimation() {
+
+        if (finished || active) {
             return;
         }
 
+        active = true;
 
-        /* Scrollstrecke in Fortschritt umrechnen */
+        // Bei einem grossen Scrollsprung die
+        // Grafik an ihre Halteposition setzen.
+
+        const stopY = getStopY();
+
+        window.scrollTo({
+            top: stopY,
+            behavior: 'instant'
+        });
+
+        lastScrollY = stopY;
+    }
+
+
+    /* ========================================
+       Diagramm schrittweise aufbauen
+    ======================================== */
+
+    function advance(distance) {
+
+        if (
+            finished ||
+            !active ||
+            distance <= 0
+        ) {
+            return;
+        }
+
+        // Sehr grosse einzelne Scrollimpulse
+        // begrenzen, damit die Grafik nicht
+        // mit einem Ereignis fertig wird.
+
+        const limitedDistance = Math.min(
+            distance,
+            window.innerHeight * 0.45
+        );
 
         progress = Math.min(
             1,
-            progress + distance / (window.innerHeight * 1.5)
+            progress
+            + limitedDistance
+            / (window.innerHeight * 1.5)
         );
-
-
-        /* Diagramm aktualisieren */
 
         renderProgress(
             easeInOut(progress)
         );
 
-
-        /* Nach 100 % vollständig freigeben */
-
         if (progress >= 1) {
-
-            finished = true;
-
-            scrolly.classList.add(
-                'is-complete'
-            );
-
-
-            /* Scrollsteuerung dauerhaft entfernen */
-
-            window.removeEventListener(
-                'wheel',
-                onWheel
-            );
-
-            window.removeEventListener(
-                'keydown',
-                onKeyDown
-            );
-
-            window.removeEventListener(
-                'touchstart',
-                onTouchStart
-            );
-
-            window.removeEventListener(
-                'touchmove',
-                onTouchMove
-            );
-
-            window.removeEventListener(
-                'touchend',
-                onTouchEnd
-            );
-
-            window.removeEventListener(
-                'touchcancel',
-                onTouchEnd
-            );
+            finishAnimation();
         }
-    };
+    }
+
+
+    /* ========================================
+       Erkennen, ob die Grafik erreicht wird
+    ======================================== */
+
+    function willReachGraphic(distance) {
+
+        if (finished) {
+            return false;
+        }
+
+        if (active) {
+            return true;
+        }
+
+        const rect =
+            graphic.getBoundingClientRect();
+
+        // Grafik liegt noch unterhalb
+        // der Halteposition.
+
+        return (
+            rect.bottom > 0
+            && rect.top - distance
+            <= getStopOffset()
+        );
+    }
 
 
     /* ========================================
@@ -502,32 +641,33 @@ function initStickyChartScroll(
             finished ||
             event.defaultPrevented ||
             event.ctrlKey ||
-            event.deltaY <= 0 ||
-            !isReady()
+            event.deltaY <= 0
         ) {
             return;
         }
 
-
-        /* Gesamte Seite kurz anhalten */
-
-        event.preventDefault();
-
-
-        /* Scrollbewegung des Geräts umrechnen */
-
         const factor =
-            event.deltaMode === 1 ? 16 :
-                event.deltaMode === 2
+            event.deltaMode === 1
+                ? 16
+                : event.deltaMode === 2
                     ? window.innerHeight
                     : 1;
 
+        const distance =
+            event.deltaY * factor;
 
-        /* Statt der Seite das Diagramm bewegen */
+        if (!willReachGraphic(distance)) {
+            return;
+        }
 
-        advance(
-            event.deltaY * factor
-        );
+        // Normales Scrollen anhalten,
+        // auch bei grossen Scrollimpulsen.
+
+        event.preventDefault();
+
+        activateAnimation();
+
+        advance(distance);
     }
 
 
@@ -543,7 +683,6 @@ function initStickyChartScroll(
             event.altKey ||
             event.ctrlKey ||
             event.metaKey ||
-            !isReady() ||
             event.target?.closest?.(
                 'input, textarea, select, button, [contenteditable="true"]'
             )
@@ -551,19 +690,17 @@ function initStickyChartScroll(
             return;
         }
 
-
         let distance = 0;
-
 
         if (event.key === 'ArrowDown') {
 
             distance = 50;
 
         } else if (
-            event.key === 'PageDown' ||
-            (
-                event.key === ' ' &&
-                !event.shiftKey
+            event.key === 'PageDown'
+            || (
+                event.key === ' '
+                && !event.shiftKey
             )
         ) {
 
@@ -571,13 +708,18 @@ function initStickyChartScroll(
                 window.innerHeight * 0.8;
         }
 
-
-        if (distance > 0) {
-
-            event.preventDefault();
-
-            advance(distance);
+        if (
+            distance <= 0 ||
+            !willReachGraphic(distance)
+        ) {
+            return;
         }
+
+        event.preventDefault();
+
+        activateAnimation();
+
+        advance(distance);
     }
 
 
@@ -597,12 +739,12 @@ function initStickyChartScroll(
     function onTouchMove(event) {
 
         if (
+            finished ||
             lastTouchY === null ||
             event.touches.length !== 1
         ) {
             return;
         }
-
 
         const currentY =
             event.touches[0].clientY;
@@ -612,26 +754,90 @@ function initStickyChartScroll(
 
         lastTouchY = currentY;
 
-
         if (
-            finished ||
-            event.defaultPrevented ||
             distance <= 0 ||
-            !isReady()
+            event.defaultPrevented ||
+            !willReachGraphic(distance)
         ) {
             return;
         }
 
-
         event.preventDefault();
+
+        activateAnimation();
 
         advance(distance);
     }
 
 
     function onTouchEnd() {
-
         lastTouchY = null;
+    }
+
+
+    /* ========================================
+       Grosse Scrollsprünge erkennen
+    ======================================== */
+
+    // Fängt auch Scrollbewegungen ab,
+    // die nicht über wheel oder touchmove
+    // abgefangen werden konnten.
+
+    function onScroll() {
+
+        if (finished) {
+            return;
+        }
+
+        const currentScrollY =
+            window.scrollY;
+
+        /* ========================================
+       Zurückscrollen während der Animation
+    ======================================== */
+
+        if (active) {
+
+            const stopY = getStopY();
+
+            // Aufwärtsbewegung jederzeit zulassen.
+            // Die Grafik bleibt beim bisherigen Fortschritt.
+            if (currentScrollY < stopY - 2) {
+
+                active = false;
+                lastScrollY = currentScrollY;
+
+                return;
+            }
+
+            // Nur Abwärtsbewegungen wieder
+            // auf die Halteposition zurücksetzen.
+            if (currentScrollY > stopY + 2) {
+
+                window.scrollTo({
+                    top: stopY,
+                    behavior: 'instant'
+                });
+            }
+
+            lastScrollY = window.scrollY;
+            return;
+        }
+
+        const stopY = getStopY();
+
+        // Halteposition wurde beim Scrollen
+        // nach unten überquert.
+
+        if (
+            currentScrollY > lastScrollY
+            && lastScrollY <= stopY
+            && currentScrollY >= stopY
+        ) {
+            activateAnimation();
+        }
+
+        lastScrollY = window.scrollY;
     }
 
 
@@ -645,12 +851,10 @@ function initStickyChartScroll(
         { passive: false }
     );
 
-
     window.addEventListener(
         'keydown',
         onKeyDown
     );
-
 
     window.addEventListener(
         'touchstart',
@@ -658,27 +862,30 @@ function initStickyChartScroll(
         { passive: true }
     );
 
-
     window.addEventListener(
         'touchmove',
         onTouchMove,
         { passive: false }
     );
 
-
     window.addEventListener(
         'touchend',
         onTouchEnd
     );
-
 
     window.addEventListener(
         'touchcancel',
         onTouchEnd
     );
 
+    window.addEventListener(
+        'scroll',
+        onScroll,
+        { passive: true }
+    );
 
-    /* Nach dem Reload beginnt die Grafik bei 0 */
+
+    /* Anfangszustand */
 
     renderProgress(0);
 }
@@ -1103,26 +1310,16 @@ async function createAccidentRateChart() {
         });
 
 
+
     const values =
         sortedData.map(row => {
 
-            const causallyInvolved =
-                Number(
-                    row.causally_involved
-                );
+            // Bereits berechnete Kennzahl aus
+            // der Datenbank (JSON) übernehmen
+            return Number(row.rate_per_100k);
 
-            const licenseHolders =
-                Number(
-                    row.license_holders
-                );
-
-
-            return (
-                causallyInvolved
-                / licenseHolders
-                * 100000
-            );
         });
+
 
 
     accidentRateChart =
@@ -1865,26 +2062,29 @@ async function createFinalAgeChart() {
         '90+'
     ];
 
-
     /* Pro Altersklasse genau ein Datenpunkt */
 
     const values = ageGroupOrder.map(ageGroup => {
 
+        // Passenden Datensatz für 2025 suchen
         const row = data2025.find(row =>
             row.age_group === ageGroup
         );
 
-        if (!row || Number(row.license_holders) <= 0) {
+        // Fehlende oder ungültige Werte abfangen
+        if (
+            !row ||
+            row.rate_per_100k === null ||
+            row.rate_per_100k === undefined ||
+            row.rate_per_100k === '' ||
+            !Number.isFinite(Number(row.rate_per_100k))
+        ) {
             return null;
         }
 
-        return (
-            Number(row.causally_involved)
-            / Number(row.license_holders)
-            * 100000
-        );
+        // Berechnete Kennzahl direkt aus JSON verwenden
+        return Number(row.rate_per_100k);
     });
-
 
     /* ========================================
        Chart.js-Diagramm
@@ -2163,39 +2363,87 @@ function updateFinalAgeChart(age) {
         `${age} Jahre – Altersgruppe ${labels[groupIndex]}: ungefähr ${rate} ursächlich Beteiligte pro 100'000 Führerausweisinhaber:innen.`;
 }
 
+
 // ========================================
 // Alle Grafiken starten
 // ========================================
 
-createAbsoluteAccidentsChart()
-    .catch(error => {
-        console.error(error);
-    });
+// Verständliche Fehlermeldung beim Diagramm anzeigen
+function showChartError(canvasSelector) {
+
+    const canvas = document.querySelector(canvasSelector);
+
+    if (!canvas) {
+        return;
+    }
+
+    const container = canvas.parentElement;
+
+    if (!container) {
+        return;
+    }
+
+    // Fehlermeldung nicht mehrfach einfügen
+    if (container.querySelector('.chart-error')) {
+        return;
+    }
+
+    // Canvas bei einem Fehler ausblenden
+    canvas.hidden = true;
+
+    const message = document.createElement('p');
+
+    message.className = 'chart-error';
+    message.textContent =
+        'Die Grafik konnte momentan nicht geladen werden. Bitte versuchen Sie es später erneut.';
+
+    message.setAttribute('role', 'alert');
+
+    container.appendChild(message);
+}
 
 
-createLicenceDevelopmentChart()
-    .catch(error => {
-        console.error(error);
-    });
+// Diagramme unabhängig voneinander starten
+function startChart(createChart, canvasSelector) {
+
+    Promise.resolve()
+        .then(() => createChart())
+        .catch(error => {
+
+            // Technischen Fehler für die Entwicklung anzeigen
+            console.error(error);
+
+            // Verständliche Meldung für Besucher:innen
+            showChartError(canvasSelector);
+        });
+}
 
 
-createAccidentRateChart()
-    .catch(error => {
-        console.error(error);
-    });
+// Alle fünf Diagramme starten
+startChart(
+    createAbsoluteAccidentsChart,
+    '#absoluteAccidentsChart'
+);
 
+startChart(
+    createLicenceDevelopmentChart,
+    '#licenceDevelopmentChart'
+);
 
-createSeverityChart()
-    .catch(error => {
-        console.error(error);
-    });
+startChart(
+    createAccidentRateChart,
+    '#accidentRateChart'
+);
 
+startChart(
+    createSeverityChart,
+    '#severityChart'
+);
 
-createFinalAgeChart()
-    .catch(error => {
-        console.error(error);
-    });
-
+startChart(
+    createFinalAgeChart,
+    '#finalAgeChart'
+);
 
 // ========================================
 // Scroll-Hero
