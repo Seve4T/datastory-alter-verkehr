@@ -14,7 +14,6 @@ try {
 
     $pdo = new PDO($dsn, $username, $password, $options);
 
-    //echo "Verbindung steht (unload).\n\n";
 
     // ------------------- DATEN AUS DATENBANK LESEN -------------------
 

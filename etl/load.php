@@ -14,7 +14,7 @@ $result = include __DIR__ . '/transform.php';
 $rows = $result['data'];
 
 
-// ------------------- TESTEN OB TRANSFORM FUNKTIONIERT -------------------
+// ------------------- TESTEN OB TRANSFORM FUNKTIONIERT UND AUSGEBEN -------------------
 
 echo 'Der Transform liefert ' . count($rows) . " Zeilen.\n\n";
 
@@ -25,14 +25,11 @@ try {
 
     $pdo = new PDO($dsn, $username, $password, $options);
 
-    echo "Verbindung steht (load).\n\n";
 
-
-    // ------------------- ALTE DATEN LÖSCHEN -------------------
+    // ------------------- BESTEHENDEN DATENSTAND LEEREN -------------------
+    // bedeutet vorherige Daten löschen damit keine Duplikate entstehen.
 
     $pdo->exec('DELETE FROM traffic_stats');
-
-    echo "Alte Daten wurden gelöscht.\n\n";
 
 
     // ------------------- INSERT VORBEREITEN -------------------
@@ -63,6 +60,7 @@ try {
 
 
     // ------------------- DATEN IN DATENBANK SCHREIBEN -------------------
+    // Jeder transformierte Datensatz wird als eigene Zeile in traffic_stats gespeichert.
 
     foreach ($rows as $row) {
 
@@ -82,7 +80,7 @@ try {
 
     // ------------------- ERFOLG AUSGEBEN -------------------
 
-    echo count($rows) . " Zeilen wurden erfolgreich geladen.\n";
+    echo count($rows) . " Zeilen wurden erfolgreich in die Datenbank geladen.\n";
 
 
 } catch (PDOException $e) {

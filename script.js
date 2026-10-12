@@ -173,9 +173,7 @@ function loadTrafficData() {
     }
 
     // JSON nur einmal vom Server anfordern
-    trafficDataPromise = fetch(
-        'https://zu-alt-fuers-steuer-im3.isobopad.myhostpoint.ch/unload.php'
-    )
+    trafficDataPromise = fetch('/unload.php')
         .then(response => {
 
             if (!response.ok) {
